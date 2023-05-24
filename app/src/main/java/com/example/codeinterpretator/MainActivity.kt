@@ -3,119 +3,137 @@ package com.example.codeinterpretator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.codeinterpretator.ui.theme.CodeInterpretatorTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CodeInterpretatorTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("World")
-                }
-            }
+            Workspace()
         }
         println("Hello world")
     }
 }
 
+@Preview
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-            text = "Hello $name!",
-            modifier = modifier
-    )
+fun Workspace() {
+    val lazyListState: LazyListState = rememberLazyListState()
+    Column() {
+        AssignmentBlock()
+    }
 }
 
-@Preview(widthDp = 320, heightDp = 300)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LazyColumnSample() {
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+fun AssignmentBlock() {
+    var variableName by remember { mutableStateOf("") }
+    var variableValue by remember { mutableStateOf("") }
+    var dropdownExpanded by remember { mutableStateOf(false) }
+    var variableType by remember { mutableStateOf("") }
+
+    Row(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+            .padding(16.dp)
+            .border(BorderStroke(2.dp, Color.Black))
     ) {
-        items(100) { position ->
-
-            println("Build item at position $position")
-
-            Row {
-                MyListItem(
-                    position = position,
-                    color = Color.Gray,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-        }
-    }
-
-    @Preview(widthDp = 320, heightDp = 50)
-    @Composable
-    fun MyListItem(
-        position: Int = 0,
-        color: Color = Color.Gray,
-    ) {
-        Row(
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .fillMaxWidth(fraction = 0.9f)
-                .padding(4.dp)
-                .height(42.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .aspectRatio(1.0f, matchHeightConstraintsFirst = true)
-                    .clip(CircleShape)
-                    .background(color)
+                .width(100.dp)
+                .height(60.dp)
+                .border(BorderStroke(2.dp, Color.Black))) {
+            TextButton(
+                onClick = { dropdownExpanded = true },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = position.toString(),
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                )
+                if (variableType.isNotEmpty()) {
+                    Text(variableType)
+                } else {
+                    Text("Integer")
+                }
             }
 
-            Spacer(modifier = Modifier.width(6.dp))
-
-            Column(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            DropdownMenu(
+                expanded = dropdownExpanded,
+                onDismissRequest = { dropdownExpanded = false },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(12.dp)
-                        .clip(shape = RoundedCornerShape(2.dp))
-                        .background(color)
+                DropdownMenuItem(onClick = {
+                    variableType = "Integer"
+                    dropdownExpanded = false
+                },
+                    text = { Text("Integer") }
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(fraction = 0.6f)
-                        .height(8.dp)
-                        .clip(shape = RoundedCornerShape(2.dp))
-                        .background(color)
+                DropdownMenuItem(onClick = {
+                    variableType = "String"
+                    dropdownExpanded = false
+                },
+                text = { Text("String") }
+                )
+                DropdownMenuItem(onClick = {
+                    variableType = "Boolean"
+                    dropdownExpanded = false
+                },
+                    text = { Text("Boolean") }
                 )
             }
         }
-    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CodeInterpretatorTheme {
-        Greeting("World")
+        TextField(
+            value = variableName,
+            onValueChange = { variableName = it },
+            modifier = Modifier.weight(1f).height(60.dp),
+            label = { Text("Name") }
+        )
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.height(60.dp).padding(10.dp)
+            ) {
+            Text("=")
+        }
+
+        TextField(
+            value = variableValue,
+            onValueChange = { variableValue = it },
+            modifier = Modifier.weight(1f).height(60.dp),
+            label = { Text("Value") }
+        )
     }
 }
