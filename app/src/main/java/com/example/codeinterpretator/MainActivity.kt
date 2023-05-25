@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = {
                         FloatingActionButton(
                             content = {
-                                Icon(Icons.Filled.PlayArrow, contentDescription = "Добавить") },
+                                Icon(Icons.Filled.PlayArrow, contentDescription = "Run") },
                             onClick = { executeCode() }
                         )
                     },
@@ -114,7 +114,7 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
 }
 
 @Composable
-fun RenderBlock(block: Any) {
+fun RenderBlock(block: Block) {
     when(block) {
         is DeclarationOrAssignmentBlock -> {
             DeclarationOrAssignmentBlockView(block)
@@ -125,9 +125,8 @@ fun RenderBlock(block: Any) {
     }
 }
 
-fun createBlock() {
-    val newBlock = OutputBlock()
-    blockList.add(newBlock)
+fun createBlock(block: Block) {
+    blockList.add(block)
 }
 
 fun executeCode() {

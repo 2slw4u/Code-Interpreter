@@ -24,8 +24,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-class OutputBlock : Block() {
-    var text: String = ""
+class OutputBlock: Block() {
+    var value = "" //Это то, что нам надо вывести
+//    override public fun translateToRPN(): ArrayList<String> {
+//        var converter = ExpressionToRPNConverter()
+//        return converter.convertExpressionToRPN(value)
+//    }
+//    override public fun execute(variables: HashMap<String, Any>) {
+//        println(interpretRPN(variables, this.translateToRPN()).toString())
+//   }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,8 +41,7 @@ fun OutputBlockView(block: OutputBlock) {
     var argument by remember { mutableStateOf("") }
     var dropdownExpanded by remember { mutableStateOf(false) }
 
-    /*variableName = block.variableName
-    variableValue = block.value*/
+    argument = block.value
 
     Row(
         modifier = Modifier.border(BorderStroke(2.dp, Color.Black))
@@ -53,7 +59,7 @@ fun OutputBlockView(block: OutputBlock) {
             value = argument,
             onValueChange = {
                 argument = it
-                block.text = argument
+                block.value = argument
             },
             modifier = Modifier
                 .weight(1f)
