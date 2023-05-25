@@ -25,17 +25,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.codeinterpretator.createBlock
+import com.example.codeinterpretator.screens.Console
 
 class DeclarationOrAssignmentBlock : Block() {
     var unusableNames: Array<String> =
         arrayOf("null", "if", "for", "fun", "Int", "String", "Bool", "Double", "Float")
     var variableName: String =
-        "a" // Здесь мы берём название переменной из соответствующего поля блока декларации
+        "" // Здесь мы берём название переменной из соответствующего поля блока декларации
     var variableType: String =
         "Int" // Здесь мы берём тип переменной из соответствующего поля блока декларации
     // Если это поле пустое, то variableType = null; это значит, что мы не декларируем переменную, а
     // переопределяем
-    var value: String = "80" // Здесь мы берём присваиваемое значение из соответствующего поля
+    var value: String = "" // Здесь мы берём присваиваемое значение из соответствующего поля
 
 //   override public fun translateToRPN(): ArrayList<String> {
 //        var converter = ExpressionToRPNConverter()
@@ -44,29 +45,31 @@ class DeclarationOrAssignmentBlock : Block() {
 
     override public fun execute(variables: HashMap<String, Any>) {
         if (variableName == null) {
-            println("Вы никак не назвали переменную!")
-            createBlock()
+            Console.print("Вы никак не назвали переменную!")
         } else if (variables.containsKey(variableName) && variableType != null) {
-            println("Редекларация переменной невозможна")
+            Console.print("Редекларация переменной невозможна")
             // здесь вместо простого вывода в консоль мы выбрасываем пользователю ошибку
         } else if (unusableNames.contains(variableName)) {
-            println("Пожалуйста, не используйте ключевые слова в качестве названий переменных")
+            Console.print("Пожалуйста, не используйте ключевые слова в качестве названий переменных")
             // здесь вместо простого вывода в консоль мы выбрасываем пользователю ошибку
         } else if (!variableName.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
-            println("Название переменной содержит запрещённые символы!")
+            Console.print("Название переменной содержит запрещённые символы!")
         } else {
 //            variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
         }
+        Console.print(value)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeclarationBlockView(block: DeclarationOrAssignmentBlock) {
+fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
     var variableName by remember { mutableStateOf("") }
     var variableValue by remember { mutableStateOf("") }
     var dropdownExpanded by remember { mutableStateOf(false) }
-    var variableType by remember { mutableStateOf("") }
+
+    variableName = block.variableName
+    variableValue = block.value
 
     Row(
         modifier = Modifier.border(BorderStroke(2.dp, Color.Black))
@@ -81,11 +84,7 @@ fun DeclarationBlockView(block: DeclarationOrAssignmentBlock) {
                 onClick = { dropdownExpanded = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (variableType.isNotEmpty()) {
-                    Text(variableType)
-                } else {
-                    Text("Int")
-                }
+                Text(block.variableType)
             }
 
             DropdownMenu(
@@ -94,29 +93,25 @@ fun DeclarationBlockView(block: DeclarationOrAssignmentBlock) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 DropdownMenuItem(onClick = {
-                    variableType = "Int"
-                    block.variableType = variableType
+                    block.variableType = "Int"
                     dropdownExpanded = false
                 },
                     text = { Text("Int") }
                 )
                 DropdownMenuItem(onClick = {
-                    variableType = "String"
-                    block.variableType = variableType
+                    block.variableType = "String"
                     dropdownExpanded = false
                 },
                     text = { Text("String") }
                 )
                 DropdownMenuItem(onClick = {
-                    variableType = "Bool"
-                    block.variableType = variableType
+                    block.variableType = "Bool"
                     dropdownExpanded = false
                 },
                     text = { Text("Bool") }
                 )
                 DropdownMenuItem(onClick = {
-                    variableType = "Double"
-                    block.variableType = variableType
+                    block.variableType = "Double"
                     dropdownExpanded = false
                 },
                     text = { Text("Double") }

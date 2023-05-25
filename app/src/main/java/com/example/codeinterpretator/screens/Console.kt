@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Edit
@@ -19,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,11 +33,13 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.example.codeinterpretator.RenderBlock
-import com.example.codeinterpretator.blockList
+import com.example.codeinterpretator.blocks.Block
+import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.executeCode
 
 object Console : Tab {
+    val consoleLines = mutableStateListOf<String>()
 
     override val options: TabOptions
         @Composable
@@ -53,14 +58,15 @@ object Console : Tab {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        var consoleText by remember { mutableStateOf("") }
+        LazyColumn() {
+            itemsIndexed(consoleLines) {
+                    index, item ->
+                Text(item)
+            }
+        }
+    }
 
-        TextField(
-            value = consoleText,
-            onValueChange = {
-                consoleText = it
-            },
-            modifier = Modifier.fillMaxSize()
-        )
+    fun print(text: String) {
+        consoleLines.add(text)
     }
 }

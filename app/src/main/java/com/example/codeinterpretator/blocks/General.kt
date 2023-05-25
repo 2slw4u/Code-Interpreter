@@ -1,5 +1,8 @@
 package com.example.codeinterpretator.blocks
 
+import androidx.compose.runtime.mutableStateListOf
+
+val blockList = mutableStateListOf<Block>()
 open class Block {
     open public fun translateToRPN(): ArrayList<String> {
         return arrayListOf<String>()

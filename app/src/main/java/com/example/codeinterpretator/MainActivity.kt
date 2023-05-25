@@ -66,12 +66,13 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.example.codeinterpretator.blocks.Block
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlock
-import com.example.codeinterpretator.blocks.DeclarationBlockView
+import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlockView
+import com.example.codeinterpretator.blocks.OutputBlock
+import com.example.codeinterpretator.blocks.OutputBlockView
+import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.screens.Workspace
 import com.example.codeinterpretator.ui.theme.CodeInterpretatorTheme
-
-val blockList = mutableStateListOf<Block>()
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,13 +117,16 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
 fun RenderBlock(block: Any) {
     when(block) {
         is DeclarationOrAssignmentBlock -> {
-            DeclarationBlockView(block)
+            DeclarationOrAssignmentBlockView(block)
+        }
+        is OutputBlock -> {
+            OutputBlockView(block)
         }
     }
 }
 
 fun createBlock() {
-    val newBlock = DeclarationOrAssignmentBlock()
+    val newBlock = OutputBlock()
     blockList.add(newBlock)
 }
 

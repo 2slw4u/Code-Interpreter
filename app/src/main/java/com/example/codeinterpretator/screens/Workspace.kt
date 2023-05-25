@@ -27,7 +27,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.example.codeinterpretator.R
 import com.example.codeinterpretator.RenderBlock
-import com.example.codeinterpretator.blockList
+import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.executeCode
 
@@ -63,26 +63,10 @@ object Workspace : Tab {
             Row() {
                 Button(onClick = {
                     createBlock()
-                    Toast.makeText(context, blockList.size.toString(), Toast.LENGTH_SHORT).show()
                 }) {
                     Text(text = "Create Block")
                 }
-
-                Button(onClick = {
-                    executeCode()
-                    Toast.makeText(context, blockList.size.toString(), Toast.LENGTH_SHORT).show()
-                }) {
-                    Text(text = "Run!")
-                }
-
-                Button(onClick = {
-                    executeCode()
-                    Toast.makeText(context, blockList.size.toString(), Toast.LENGTH_SHORT).show()
-                }) {
-                    Text(text = "Console")
-                }
             }
-
         }
     }
 }
