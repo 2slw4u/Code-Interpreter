@@ -87,7 +87,10 @@ class MainActivity : ComponentActivity() {
                         FloatingActionButton(
                             content = {
                                 Icon(Icons.Filled.PlayArrow, contentDescription = "Run") },
-                            onClick = { executeCode() }
+                            onClick = {
+                                Console.clear()
+                                executeCode()
+                            }
                         )
                     },
                     bottomBar = {
