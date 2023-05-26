@@ -2,6 +2,7 @@ package com.example.codeinterpretator.blocks
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,22 +27,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.DragTarget
 
 class DeclarationOrAssignmentBlock : Block() {
-    var unusableNames: Array<String> =
+    val unusableNames: Array<String> =
         arrayOf("null", "if", "for", "fun", "Int", "String", "Bool", "Double", "Float")
     var variableName: String =
         "" // Здесь мы берём название переменной из соответствующего поля блока декларации
     var variableType: String =
         "Int" // Здесь мы берём тип переменной из соответствующего поля блока декларации
+
     // Если это поле пустое, то variableType = null; это значит, что мы не декларируем переменную, а
     // переопределяем
     var value: String = "" // Здесь мы берём присваиваемое значение из соответствующего поля
 
-//   override public fun translateToRPN(): ArrayList<String> {
-//        var converter = ExpressionToRPNConverter()
-//        return converter.convertExpressionToRPN(value)
-//    }
+   override public fun translateToRPN(): ArrayList<String> {
+        var converter = ExpressionToRPNConverter()
+        return converter.convertExpressionToRPN(value)
+    }
 
     override public fun execute(variables: HashMap<String, Any>) {
         if (variableName == null) {
@@ -55,9 +58,8 @@ class DeclarationOrAssignmentBlock : Block() {
         } else if (!variableName.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
             Console.print("Название переменной содержит запрещённые символы!")
         } else {
-//            variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
+            variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
         }
-        Console.print(value)
     }
 }
 
@@ -72,14 +74,17 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
     variableValue = block.value
 
     Row(
-        modifier = Modifier.border(BorderStroke(2.dp, Color.Black))
+        modifier = Modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .border(BorderStroke(2.dp, Color.Black))
+            .background(color = Color.White)
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .width(100.dp)
                 .height(60.dp)
-                .border(BorderStroke(2.dp, Color.Black))) {
+        ) {
             TextButton(
                 onClick = { dropdownExpanded = true },
                 modifier = Modifier.fillMaxWidth()

@@ -20,6 +20,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -36,17 +38,20 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.example.codeinterpretator.R
 import com.example.codeinterpretator.RenderBlock
+import com.example.codeinterpretator.blocks.Block
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlock
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlockView
 import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
+import com.example.codeinterpretator.blocks.ReceiverBlockView
 import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.executeCode
+import com.example.codeinterpretator.ui.theme.DragTarget
+import com.example.codeinterpretator.ui.theme.LongPressDraggable
 import kotlinx.coroutines.launch
 
 object Workspace : Tab {
-
     override val options: TabOptions
         @Composable
         get() {
@@ -63,8 +68,6 @@ object Workspace : Tab {
 
     @Composable
     override fun Content() {
-        //val bottomSheetNavigator = LocalBottomSheetNavigator.current
-
         val scaffoldState = rememberScaffoldState()
         val scope = rememberCoroutineScope()
 
@@ -75,7 +78,7 @@ object Workspace : Tab {
             drawerContent = {
                 Box(
                     modifier = Modifier.clickable {
-                        createBlock(declaration)
+                        createBlock(declaration, blockList.size)
                         scope.launch{
                             scaffoldState.drawerState.close()
                         }
@@ -86,7 +89,7 @@ object Workspace : Tab {
 
                 Box(
                     modifier = Modifier.clickable {
-                        createBlock(output)
+                        createBlock(output, blockList.size)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }
@@ -100,15 +103,32 @@ object Workspace : Tab {
             Column(
                 modifier = Modifier.padding(padding)
             ) {
-                LazyColumn() {
-                    itemsIndexed(blockList) { index, item ->
-                        RenderBlock(item)
+                LongPressDraggable(modifier = Modifier.fillMaxSize()) {
+                    Column() {
+                        LazyColumn() {
+                            item { ReceiverBlockView(-1) }
+                            itemsIndexed(blockList) { index, item ->
+                                DragTarget(modifier = Modifier, dataToDrop = item, blockId = index) {
+                                    RenderBlock(item)
+                                }
+                                ReceiverBlockView(index)
+                            }
+                        }
                     }
-                }
-                Button(onClick = {
-                    scope.launch { scaffoldState.drawerState.open() }
-                }) {
-                    Text("+", fontSize = 28.sp)
+
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.BottomStart
+                    ) {
+                        Button(
+                            onClick = { scope.launch { scaffoldState.drawerState.open() } },
+                            modifier = Modifier.padding(bottom = 70.dp, start = 10.dp)
+                        ) {
+                            Text("+", fontSize = 28.sp)
+                        }
+                    }
+
                 }
             }
         }

@@ -128,8 +128,12 @@ fun RenderBlock(block: Block) {
     }
 }
 
-fun createBlock(block: Block) {
-    blockList.add(block)
+fun createBlock(block: Block, at: Int) {
+    blockList.add(at, block)
+}
+
+fun deleteBlock(at: Int) {
+    blockList.removeAt(at)
 }
 
 fun executeCode() {

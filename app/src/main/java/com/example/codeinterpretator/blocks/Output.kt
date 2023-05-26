@@ -1,6 +1,7 @@
 package com.example.codeinterpretator.blocks
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,28 +24,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.DragTarget
 
-class OutputBlock: Block() {
+class OutputBlock : Block() {
     var value = "" //Это то, что нам надо вывести
 //    override public fun translateToRPN(): ArrayList<String> {
 //        var converter = ExpressionToRPNConverter()
 //        return converter.convertExpressionToRPN(value)
 //    }
-//    override public fun execute(variables: HashMap<String, Any>) {
+    override public fun execute(variables: HashMap<String, Any>) {
 //        println(interpretRPN(variables, this.translateToRPN()).toString())
-//   }
+   }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutputBlockView(block: OutputBlock) {
     var argument by remember { mutableStateOf("") }
-    var dropdownExpanded by remember { mutableStateOf(false) }
 
     argument = block.value
 
     Row(
-        modifier = Modifier.border(BorderStroke(2.dp, Color.Black))
+        modifier = Modifier
+            .padding(start = 10.dp, end = 10.dp)
+            .border(BorderStroke(2.dp, Color.Black))
+            .background(color = Color.White)
     ) {
         Box(
             contentAlignment = Alignment.Center,
