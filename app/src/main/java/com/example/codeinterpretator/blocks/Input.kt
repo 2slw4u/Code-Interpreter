@@ -24,6 +24,7 @@ import com.example.codeinterpretator.interpreter.convertToIntOrNull
 import com.example.codeinterpretator.interpreter.extractIndexSubstring
 import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_OUTPUT
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VARIABLE
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
@@ -129,12 +130,13 @@ class InputBlock: Block() {
 @Composable
 fun InputBlockView(block: InputBlock) {
     var argument by remember { mutableStateOf("") }
-
+    var nestedPadding by remember { mutableStateOf(0) }
+    nestedPadding = block.nestedPadding()
     argument = block.variableName
 
     Row(
         modifier = Modifier
-            .padding(start = 10.dp, end = 10.dp)
+            .padding(start = nestedPadding.dp, end = BETWEEN_BLOCK_DISTANCE.dp)
             .border(BorderStroke(2.dp, Color.Black))
             .background(color = Color.White)
     ) {

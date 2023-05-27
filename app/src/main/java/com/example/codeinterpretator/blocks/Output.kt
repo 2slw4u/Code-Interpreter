@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.codeinterpretator.interpreter.ExpressionToRPNConverter
 import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_OUTPUT
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
 import com.example.codeinterpretator.ui.theme.DragTarget
@@ -52,7 +53,7 @@ fun OutputBlockView(block: OutputBlock) {
 
     Row(
         modifier = Modifier
-            .padding(start = 10.dp, end = 10.dp)
+            .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
             .border(BorderStroke(2.dp, Color.Black))
             .background(color = Color.White)
     ) {

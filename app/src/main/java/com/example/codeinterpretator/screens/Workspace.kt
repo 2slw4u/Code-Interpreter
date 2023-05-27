@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
@@ -46,8 +47,11 @@ import com.example.codeinterpretator.blocks.AssignmentBlockView
 import com.example.codeinterpretator.blocks.Block
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlock
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlockView
+import com.example.codeinterpretator.blocks.IfElseBlock
+import com.example.codeinterpretator.blocks.IfElseBlockView
 import com.example.codeinterpretator.blocks.InputBlock
 import com.example.codeinterpretator.blocks.InputBlockView
+import com.example.codeinterpretator.blocks.NestingBlock
 import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
 import com.example.codeinterpretator.blocks.ReceiverBlockView
@@ -61,9 +65,13 @@ import com.example.codeinterpretator.ui.theme.TITLE_ASSIGNMENT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_DECLARATION_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_INPUT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_OUTPUT_BLOCK
+import com.example.codeinterpretator.ui.theme.TITLE_OUTPUT_IFELSE
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
 object Workspace : Tab {
+    var addBlockAt = blockList.size
+    var parentBlock: NestingBlock? = null
+    var additionalList: ArrayList<Block> = arrayListOf<Block>()
     override val options: TabOptions
         @Composable
         get() {
@@ -87,6 +95,8 @@ object Workspace : Tab {
         var assignment = AssignmentBlock()
         var output = OutputBlock()
         var input = InputBlock()
+        var ifelse = IfElseBlock()
+        ifelse.isPreview = true
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -103,7 +113,7 @@ object Workspace : Tab {
                     modifier = Modifier
                         .clickable {
                             var newBlock = DeclarationOrAssignmentBlock()
-                            createBlock(newBlock, blockList.size)
+                            createBlock(newBlock, addBlockAt, parentBlock, additionalList)
                             scope.launch{
                             scaffoldState.drawerState.close()
                         }
@@ -116,7 +126,7 @@ object Workspace : Tab {
                 Box(
                     modifier = Modifier.clickable {
                         var newBlock = AssignmentBlock()
-                        createBlock(newBlock, blockList.size)
+                        createBlock(newBlock, addBlockAt, parentBlock, additionalList)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }
@@ -129,7 +139,7 @@ object Workspace : Tab {
                 Box(
                     modifier = Modifier.clickable {
                         var newBlock = InputBlock()
-                        createBlock(newBlock, blockList.size)
+                        createBlock(newBlock, addBlockAt, parentBlock, additionalList)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }
@@ -142,13 +152,26 @@ object Workspace : Tab {
                 Box(
                     modifier = Modifier.clickable {
                         var newBlock = OutputBlock()
-                        createBlock(newBlock, blockList.size)
+                        createBlock(newBlock, addBlockAt, parentBlock, additionalList)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }
                     }
                 ) {
                     OutputBlockView(output)
+                }
+
+                Text(TITLE_OUTPUT_IFELSE)
+                Box(
+                    modifier = Modifier.clickable {
+                        var newBlock = IfElseBlock()
+                        createBlock(newBlock, addBlockAt, parentBlock, additionalList)
+                        scope.launch {
+                            scaffoldState.drawerState.close()
+                        }
+                    }
+                ) {
+                    IfElseBlockView(ifelse, rememberScaffoldState(), rememberCoroutineScope())
                 }
             }
         ) { padding ->
@@ -161,7 +184,7 @@ object Workspace : Tab {
                             item { ReceiverBlockView(-1) }
                             itemsIndexed(blockList) { index, item ->
                                 DragTarget(modifier = Modifier, dataToDrop = item, blockId = index) {
-                                    RenderBlock(item)
+                                    RenderBlock(item, scaffoldState, scope)
                                 }
                                 ReceiverBlockView(index)
                             }
@@ -174,7 +197,12 @@ object Workspace : Tab {
                         contentAlignment = Alignment.BottomStart
                     ) {
                         Button(
-                            onClick = { scope.launch { scaffoldState.drawerState.open() } },
+                            onClick = {
+                                scope.launch {
+                                    scaffoldState.drawerState.open()
+                                    parentBlock = null
+                                    addBlockAt = blockList.size}
+                                      },
                             modifier = Modifier.padding(bottom = 70.dp, start = 10.dp)
                         ) {
                             Text("+", fontSize = 28.sp)

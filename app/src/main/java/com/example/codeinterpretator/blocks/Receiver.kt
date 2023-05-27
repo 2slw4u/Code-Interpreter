@@ -26,10 +26,11 @@ import com.example.codeinterpretator.R
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.deleteBlock
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.screens.Workspace
+import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
+import com.example.codeinterpretator.ui.theme.BLOCK_HEIGHT
 import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.DropTarget
-import com.example.codeinterpretator.ui.theme.betweenBlockDistance
-import com.example.codeinterpretator.ui.theme.blockHeight
 
 @Composable
 fun ReceiverBlockView(receiverBlockId: Int) {
@@ -38,29 +39,29 @@ fun ReceiverBlockView(receiverBlockId: Int) {
         modifier = Modifier
             .fillMaxWidth()
     ) {isInBound, block, oldBlockId ->
-        val expandedHeight = betweenBlockDistance * 2 + blockHeight * (block?.partCount ?: 1)
-        var height = if (isInBound) expandedHeight else betweenBlockDistance
+        val expandedHeight = BETWEEN_BLOCK_DISTANCE * 2 + BLOCK_HEIGHT * (block?.partCount ?: 1)
+        var height = if (isInBound) expandedHeight else BETWEEN_BLOCK_DISTANCE
         block?.let {
             if (isInBound && !alreadyPlaced) {
                 if (oldBlockId < receiverBlockId) {
-                    createBlock(block, receiverBlockId + 1)
+                    createBlock(block, receiverBlockId + 1, Workspace.parentBlock, Workspace.additionalList)
                     deleteBlock(oldBlockId)
                     Console.print("from $oldBlockId")
                     Console.print("to $receiverBlockId")
                     Console.print("if")
                 }
                 else {
-                    createBlock(block, receiverBlockId + 1)
+                    createBlock(block, receiverBlockId + 1, Workspace.parentBlock, Workspace.additionalList)
                     deleteBlock(oldBlockId + 1)
                     Console.print("from $oldBlockId")
                     Console.print("to $receiverBlockId")
                     Console.print("else")
                 }
-                height = betweenBlockDistance
+                height = BETWEEN_BLOCK_DISTANCE
                 alreadyPlaced = true
             }
             else {
-                createBlock(block, oldBlockId)
+                createBlock(block, oldBlockId, Workspace.parentBlock, Workspace.additionalList)
             }
         }
 
@@ -71,5 +72,4 @@ fun ReceiverBlockView(receiverBlockId: Int) {
                 .fillMaxWidth()
         )
     }
-
 }

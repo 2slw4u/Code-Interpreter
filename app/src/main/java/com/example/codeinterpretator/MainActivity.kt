@@ -27,10 +27,12 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -69,14 +71,19 @@ import com.example.codeinterpretator.blocks.AssignmentBlockView
 import com.example.codeinterpretator.blocks.Block
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlock
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlockView
+import com.example.codeinterpretator.blocks.IfElseBlock
+import com.example.codeinterpretator.blocks.IfElseBlockView
 import com.example.codeinterpretator.blocks.InputBlock
 import com.example.codeinterpretator.blocks.InputBlockView
+import com.example.codeinterpretator.blocks.NestingBlock
 import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
 import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.screens.Workspace
 import com.example.codeinterpretator.ui.theme.CodeInterpretatorTheme
+import kotlinx.coroutines.CoroutineScope
+
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,7 +128,7 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
 }
 
 @Composable
-fun RenderBlock(block: Block) {
+fun RenderBlock(block: Block, scaffoldState: ScaffoldState, scope: CoroutineScope) {
     when(block) {
         is DeclarationOrAssignmentBlock -> {
             DeclarationOrAssignmentBlockView(block)
@@ -135,13 +142,46 @@ fun RenderBlock(block: Block) {
         is OutputBlock -> {
             OutputBlockView(block)
         }
+        is IfElseBlock -> {
+            IfElseBlockView(block, scaffoldState, scope)
+        }
     }
 }
 
-fun createBlock(block: Block, at: Int) {
-    if(blockList.size != 0)
-        blockList.last().nextBlock = block
+fun createBlock(block: Block, at: Int, parentBlock: NestingBlock?, additionalList: ArrayList<Block>) {
+    if (parentBlock != null)
+        block.parentBlock = parentBlock
+
+    if (at != 0) {
+        if (blockList[at - 1].parentBlock == block.parentBlock) {
+            blockList[at - 1].nextBlock = block
+        }
+        else {
+            for (i in at - 2 downTo 0 step 1) {
+                if (blockList[i].parentBlock == block.parentBlock) {
+                    blockList[i].nextBlock = block
+                }
+            }
+        }
+    }
+
+    if (at != blockList.size) {
+        if (blockList[at].parentBlock == block.parentBlock) {
+            block.nextBlock = blockList[at]
+        }
+        else {
+            for (i in at + 1..blockList.size - 1) {
+                if (blockList[i].parentBlock == block.parentBlock) {
+                    block.nextBlock = blockList[i]
+                }
+            }
+        }
+    }
+
     blockList.add(at, block)
+    if (parentBlock != null) {
+        additionalList.add(block)
+    }
 }
 
 fun deleteBlock(at: Int) {
@@ -150,9 +190,6 @@ fun deleteBlock(at: Int) {
 
 fun executeCode() {
     var variables = HashMap<String, Any>()
-    /*for (currentBlock: Block in blockList) {
-        currentBlock.execute(variables)
-    }*/
     if (blockList.size != 0)
         blockList[0].execute(variables)
 }

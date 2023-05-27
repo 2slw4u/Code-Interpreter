@@ -5,6 +5,7 @@ val TITLE_DECLARATION_BLOCK = "Декларация + присваивание"
 val TITLE_ASSIGNMENT_BLOCK = "Присваивание"
 val TITLE_INPUT_BLOCK = "Ввод"
 val TITLE_OUTPUT_BLOCK = "Вывод"
+val TITLE_OUTPUT_IFELSE = "Условное ветвление"
 
 val BLOCKLABEL_VARIABLE = "Variable"
 val BLOCKLABEL_NAME = "Name"
