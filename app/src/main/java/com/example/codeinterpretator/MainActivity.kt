@@ -66,6 +66,8 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.example.codeinterpretator.blocks.ArrayDeclarationAndAssignmentBlock
+import com.example.codeinterpretator.blocks.ArrayDeclarationAndAssignmentBlockView
 import com.example.codeinterpretator.blocks.AssignmentBlock
 import com.example.codeinterpretator.blocks.AssignmentBlockView
 import com.example.codeinterpretator.blocks.Block
@@ -139,6 +141,10 @@ fun RenderBlock(block: Block, scaffoldState: ScaffoldState, scope: CoroutineScop
             AssignmentBlockView(block)
         }
 
+        is ArrayDeclarationAndAssignmentBlock -> {
+            ArrayDeclarationAndAssignmentBlockView(block)
+        }
+
         is InputBlock -> {
             InputBlockView(block)
         }
@@ -194,6 +200,10 @@ fun createBlock(
 
 fun deleteBlock(at: Int) {
     blockList.removeAt(at)
+}
+
+fun clearSpace() {
+    blockList.clear()
 }
 
 fun executeCode() {

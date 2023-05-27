@@ -1,6 +1,5 @@
 package com.example.codeinterpretator.blocks
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,20 +22,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.interpreter.ExpressionToRPNConverter
+import com.example.codeinterpretator.interpreter.convertToIntOrNull
+import com.example.codeinterpretator.interpreter.extractIndexSubstring
+import com.example.codeinterpretator.interpreter.getType
 import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_NAME
+import com.example.codeinterpretator.ui.theme.BLOCKLABEL_NAMES
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
+import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUES
 import com.example.codeinterpretator.ui.theme.BLOCK_HEIGHT
 import com.example.codeinterpretator.ui.theme.BORDER
 import com.example.codeinterpretator.ui.theme.Black
-import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.EQUALSIGN
+import com.example.codeinterpretator.ui.theme.ERROR_ARRAY_SIZE_IS_NEGATIVE
+import com.example.codeinterpretator.ui.theme.ERROR_ARRAY_SIZE_NOT_INTEGER
+import com.example.codeinterpretator.ui.theme.ERROR_ARRAY_TYPE_NOT_DECLARED
+import com.example.codeinterpretator.ui.theme.ERROR_ARRAY_UNCOMPATIBLE_TYPES
+import com.example.codeinterpretator.ui.theme.ERROR_CONTAINING_RESTRICTED_SYMBOLS
+import com.example.codeinterpretator.ui.theme.ERROR_NO_VARIABLE_NAME
+import com.example.codeinterpretator.ui.theme.ERROR_REDECLARING_VARIABLES
+import com.example.codeinterpretator.ui.theme.ERROR_TOO_MANY_VARIABLES_FOR_ARRAY
+import com.example.codeinterpretator.ui.theme.ERROR_USING_KEYWORDS_IN_VARIABLE_NAME
 import com.example.codeinterpretator.ui.theme.SINGLE_WEIGHT
 import com.example.codeinterpretator.ui.theme.TYPENAME_BOOL
 import com.example.codeinterpretator.ui.theme.TYPENAME_CHAR
@@ -45,16 +55,17 @@ import com.example.codeinterpretator.ui.theme.TYPENAME_INT
 import com.example.codeinterpretator.ui.theme.TYPENAME_STRING
 import com.example.codeinterpretator.ui.theme.TYPE_LABEL_WIDTH
 import com.example.codeinterpretator.ui.theme.White
-import com.example.codeinterpretator.ui.theme.*
 
-class DeclarationOrAssignmentBlock : Block() {
+class ArrayDeclarationAndAssignmentBlock : Block() {
     val unusableNames: Array<String> =
         arrayOf("null", "if", "for", "fun", "Int", "String", "Bool", "Double", "Float", "Char")
     var variableNames: String =
-        "" // Здесь мы берём названия переменных из соответствующего поля блока декларации
+        "" // Здесь мы берём названия массивов из соответствующего поля блока
+
+    // декларации
     var variableType: String =
         TYPENAME_INT // Здесь мы берём тип переменной из соответствующего поля блока декларации
-    var value: String = ""
+    var variableValues: String = ""
     val typesExamples =
         hashMapOf<String, Any>(
             "Int" to 0,
@@ -64,57 +75,118 @@ class DeclarationOrAssignmentBlock : Block() {
             "Char" to 'c'
         )
 
-    private fun isRedeclared(variables: HashMap<String, Any>, variableName: String): Boolean {
-        if (variables.containsKey(variableName)) {
-            return true
-        }
-        val existingTypes = arrayOf("Int", "String", "Bool", "Double", "Char")
-        for (type in existingTypes) {
-            if (variables.containsKey(variableName + ":" + type)) {
-                return true
+    private fun createTypedArray(size: Any): Array<Any> {
+        return when (variableType) {
+            "String" -> {
+                Array(size.toString().toDouble().toInt()) { "" }
+            }
+
+            "Int" -> {
+                Array(size.toString().toDouble().toInt()) { 0 }
+            }
+
+            "Boolean" -> {
+                Array(size.toString().toDouble().toInt()) { false }
+            }
+
+            "Char" -> {
+                Array(size.toString().toDouble().toInt()) { '0' }
+            }
+
+            "Double" -> {
+                Array(size.toString().toDouble().toInt()) { 0.0 }
+            }
+
+            else -> {
+                Console.print(ERROR_ARRAY_TYPE_NOT_DECLARED)
+                Array(size.toString().toDouble().toInt()) { 0 }
             }
         }
-        return false
     }
 
-    override public fun translateToRPN(): ArrayList<String> {
+    private fun reformArray(
+        values: List<String>,
+        currentArray: Array<Any>,
+        variables: HashMap<String, Any>
+    ): Array<Any> {
         val converter = ExpressionToRPNConverter()
-        return converter.convertExpressionToRPN(value)
+        val result = currentArray
+        for (valueIndex in values.indices) {
+            if (valueIndex < result.size) {
+                val currentValue =
+                    interpretRPN(
+                        variables,
+                        converter.convertExpressionToRPN(values[valueIndex])
+                    )
+                if (typesExamples[variableType]!!::class == currentValue::class) {
+                    result[valueIndex] = currentValue
+                } else {
+                    Console.print(
+                        ERROR_ARRAY_UNCOMPATIBLE_TYPES + variableType + " ; " + getType(
+                            result
+                        )
+                    )
+                }
+            } else {
+                Console.print(ERROR_TOO_MANY_VARIABLES_FOR_ARRAY)
+            }
+        }
+        return result
+    }
+
+    private fun getAllValues(): List<String> {
+        val result = mutableListOf<String>()
+        var ignoreSymbols = false
+        var writeSymbols = false
+        var value = ""
+        for (i in variableValues.indices) {
+            if (variableValues[i] == '\"') {
+                ignoreSymbols = (ignoreSymbols == false)
+            }
+            if (ignoreSymbols == false && variableValues[i] == '(') {
+                writeSymbols = true
+            } else if (ignoreSymbols == false && variableValues[i] == ')') {
+                writeSymbols = false
+                result.add(value)
+                value = ""
+            } else if (writeSymbols == true) {
+                value += variableValues[i]
+            }
+        }
+        return result
     }
 
     override public fun execute(variables: HashMap<String, Any>) {
         val allNames = variableNames.replace(" ", "").split(",")
-        for (variableName in allNames) {
+        for (nameIndex in allNames.indices) {
+            var converter = ExpressionToRPNConverter()
+            val size =
+                interpretRPN(
+                    variables,
+                    converter.convertExpressionToRPN(
+                        extractIndexSubstring(allNames[nameIndex], '(', ')')
+                    )
+                )
+            val variableName = allNames[nameIndex].substringBefore('(')
             if (variableName == "") {
                 Console.print(ERROR_NO_VARIABLE_NAME)
-            } else if (isRedeclared(variables, variableName)) {
+            } else if (variables.containsKey(variableName)) {
                 Console.print(ERROR_REDECLARING_VARIABLES)
             } else if (unusableNames.contains(variableName)) {
                 Console.print(ERROR_USING_KEYWORDS_IN_VARIABLE_NAME)
             } else if (!variableName.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
                 Console.print(ERROR_CONTAINING_RESTRICTED_SYMBOLS)
+            } else if (convertToIntOrNull(size.toString()) == null) {
+                Console.print(ERROR_ARRAY_SIZE_NOT_INTEGER)
+            } else if (convertToIntOrNull(size.toString())!! < 0) {
+                Console.print(ERROR_ARRAY_SIZE_IS_NEGATIVE)
             } else {
-                if (value == "") {
-                    var fullName = variableName + ":" + variableType
-                    variables.put(fullName, 0)
-                } else {
-                    if (typesExamples[variableType]!!::class == interpretRPN(
-                            variables,
-                            this.translateToRPN()
-                        )::class
-                    ) {
-                        variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
-                    } else {
-                        Console.print(
-                            ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT + variableType + " ; " + interpretRPN(
-                                variables,
-                                this.translateToRPN()
-                            )::class
-                        )
-                    }
-                }
+                var createdArray: Array<Any> = createTypedArray(size)
+                createdArray = reformArray(getAllValues(), createdArray, variables)
+                variables.put(variableName, createdArray)
             }
         }
+
         nextBlock?.execute(variables)
         if (nextBlock == null)
             parentBlock?.executeAfterNesting(variables)
@@ -123,13 +195,13 @@ class DeclarationOrAssignmentBlock : Block() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
-    var variableName by remember { mutableStateOf("") }
-    var variableValue by remember { mutableStateOf("") }
+fun ArrayDeclarationAndAssignmentBlockView(block: ArrayDeclarationAndAssignmentBlock) {
+    var variableNames by remember { mutableStateOf("") }
+    var variableValues by remember { mutableStateOf("") }
     var dropdownExpanded by remember { mutableStateOf(false) }
 
-    variableName = block.variableNames
-    variableValue = block.value
+    variableNames = block.variableNames
+    variableValues = block.variableValues
 
     Row(
         modifier = Modifier
@@ -189,15 +261,15 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
         }
 
         TextField(
-            value = variableName,
+            value = variableNames,
             onValueChange = {
-                variableName = it
-                block.variableNames = variableName
+                variableNames = it
+                block.variableNames = variableNames
             },
             modifier = Modifier
                 .weight(SINGLE_WEIGHT)
                 .height(BLOCK_HEIGHT.dp),
-            label = { Text(BLOCKLABEL_NAME) }
+            label = { Text(BLOCKLABEL_NAMES) }
         )
 
         Box(
@@ -210,15 +282,15 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
         }
 
         TextField(
-            value = variableValue,
+            value = variableValues,
             onValueChange = {
-                variableValue = it
-                block.value = variableValue
+                variableValues = it
+                block.variableValues = variableValues
             },
             modifier = Modifier
                 .weight(SINGLE_WEIGHT)
                 .height(BLOCK_HEIGHT.dp),
-            label = { Text(BLOCKLABEL_VALUE) }
+            label = { Text(BLOCKLABEL_VALUES) }
         )
     }
 }

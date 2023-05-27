@@ -103,9 +103,8 @@ class AssignmentBlock : Block() {
             if (array[index]::class == processedValue::class) {
                 array[index] = processedValue
                 variables.put(arrayName, array)
-            }
-            else {
-                Console.print(ERROR_ARRAY_UNCOMPATIBLE_TYPES+ array[index]::class + "; " + processedValue::class)
+            } else {
+                Console.print(ERROR_ARRAY_UNCOMPATIBLE_TYPES + array[index]::class + "; " + processedValue::class)
             }
         } else {
             if (array == null) {
@@ -126,7 +125,11 @@ class AssignmentBlock : Block() {
             if (variables[variableName]!!::class == result::class) {
                 variables.put(variableName, result)
             } else {
-                Console.print(ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT +getType(variables[variableName]!!) +" ; " + getType(result))
+                Console.print(
+                    ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT + getType(variables[variableName]!!) + " ; " + getType(
+                        result
+                    )
+                )
             }
         } else {
             var variableIsDeclared: Boolean = false
@@ -136,7 +139,7 @@ class AssignmentBlock : Block() {
                         variables.put(variableName, result)
                         variables.remove(variableName + ":" + type)
                     } else {
-                        Console.print(ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT +getType(result) +" ; " +type)
+                        Console.print(ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT + getType(result) + " ; " + type)
                     }
                     variableIsDeclared = true
                     break
@@ -165,7 +168,6 @@ class AssignmentBlock : Block() {
             parentBlock?.executeAfterNesting(variables)
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)

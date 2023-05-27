@@ -2,6 +2,7 @@ package com.example.codeinterpretator.interpreter
 
 import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.ui.theme.ERROR_CHAR_OUT_OF_RANGE
+import com.example.codeinterpretator.ui.theme.UNDEFINED_TYPE
 
 fun getType(value: Any): String {
     if (value is Int) {
@@ -15,7 +16,7 @@ fun getType(value: Any): String {
     } else if (value is Char) {
         return "Char"
     }
-    return "ты че"
+    return UNDEFINED_TYPE
 }
 
 fun convertToIntOrNull(value: String): Int? {

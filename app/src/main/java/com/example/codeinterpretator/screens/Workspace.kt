@@ -12,12 +12,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -42,6 +46,8 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.example.codeinterpretator.R
 import com.example.codeinterpretator.RenderBlock
+import com.example.codeinterpretator.blocks.ArrayDeclarationAndAssignmentBlock
+import com.example.codeinterpretator.blocks.ArrayDeclarationAndAssignmentBlockView
 import com.example.codeinterpretator.blocks.AssignmentBlock
 import com.example.codeinterpretator.blocks.AssignmentBlockView
 import com.example.codeinterpretator.blocks.Block
@@ -56,11 +62,13 @@ import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
 import com.example.codeinterpretator.blocks.ReceiverBlockView
 import com.example.codeinterpretator.blocks.blockList
+import com.example.codeinterpretator.clearSpace
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.executeCode
 import com.example.codeinterpretator.ui.theme.DRAWER_TITLE
 import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.LongPressDraggable
+import com.example.codeinterpretator.ui.theme.TITLE_ARRAY_ASSIGNMENT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_ASSIGNMENT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_DECLARATION_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_INPUT_BLOCK
@@ -93,11 +101,26 @@ object Workspace : Tab {
         val scope = rememberCoroutineScope()
 
         var declaration = DeclarationOrAssignmentBlock()
+        declaration.variableNames = "a"
+        declaration.value = "12+3"
+
         var assignment = AssignmentBlock()
+        assignment.variableName = "b"
+        assignment.value = "9"
+
+        var array = ArrayDeclarationAndAssignmentBlock()
+        array.variableNames = "a(2)"
+        array.variableValues = "(5), (7+2)"
+
         var output = OutputBlock()
+        output.value = "\"Hello World!\""
+
         var input = InputBlock()
+        input.variableName = "a"
+
         var ifelse = IfElseBlock()
         ifelse.isPreview = true
+        ifelse.expression = "a>b"
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -134,6 +157,19 @@ object Workspace : Tab {
                     }
                 ) {
                     AssignmentBlockView(assignment)
+                }
+
+                Text(TITLE_ARRAY_ASSIGNMENT_BLOCK)
+                Box(
+                    modifier = Modifier.clickable {
+                        var newBlock = ArrayDeclarationAndAssignmentBlock()
+                        createBlock(newBlock, addBlockAt, parentBlock, additionalList)
+                        scope.launch {
+                            scaffoldState.drawerState.close()
+                        }
+                    }
+                ) {
+                    ArrayDeclarationAndAssignmentBlockView(array)
                 }
 
                 Text(TITLE_INPUT_BLOCK)
@@ -201,7 +237,10 @@ object Workspace : Tab {
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.BottomStart
                     ) {
-                        Button(
+                        FloatingActionButton(
+                            content = {
+                                Icon(Icons.Filled.Add, contentDescription = "Add")
+                            },
                             onClick = {
                                 scope.launch {
                                     scaffoldState.drawerState.open()
@@ -210,11 +249,24 @@ object Workspace : Tab {
                                 }
                             },
                             modifier = Modifier.padding(bottom = 70.dp, start = 10.dp)
-                        ) {
-                            Text("+", fontSize = 28.sp)
-                        }
+                        )
                     }
 
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        FloatingActionButton(
+                            content = {
+                                Icon(Icons.Filled.Delete, contentDescription = "Clear")
+                            },
+                            onClick = {
+                                Console.clear()
+                                clearSpace()
+                            },
+                            modifier = Modifier.padding(bottom = 70.dp)
+                        )
+                    }
                 }
             }
         }

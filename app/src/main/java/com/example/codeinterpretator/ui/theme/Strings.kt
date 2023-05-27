@@ -3,6 +3,7 @@ package com.example.codeinterpretator.ui.theme
 val DRAWER_TITLE = "Коснитесь, чтобы добавить"
 val TITLE_DECLARATION_BLOCK = "Декларация + присваивание"
 val TITLE_ASSIGNMENT_BLOCK = "Присваивание"
+val TITLE_ARRAY_ASSIGNMENT_BLOCK = "Декларация массива"
 val TITLE_INPUT_BLOCK = "Ввод"
 val TITLE_OUTPUT_BLOCK = "Вывод"
 val TITLE_OUTPUT_IFELSE = "Условное ветвление"
@@ -10,6 +11,8 @@ val TITLE_OUTPUT_IFELSE = "Условное ветвление"
 val BLOCKLABEL_VARIABLE = "Variable"
 val BLOCKLABEL_NAME = "Name"
 val BLOCKLABEL_VALUE = "Value"
+val BLOCKLABEL_NAMES = "Names"
+val BLOCKLABEL_VALUES = "Values"
 val BLOCKLABEL_OUTPUT = "Output"
 val BLOCKLABEL_EXPRESSION = "Expression"
 
@@ -76,3 +79,6 @@ const val ERROR_DIFFERENT_ARRAY_SIZES =
 const val ERROR_INCORRECT_ARRAY_NAME = "Указан некорректное название массива для переменной: "
 const val ERROR_INCORRECT_INDEX = "Указан некорректный индекс для переменной: "
 const val ERROR_MODULUS_BY_ZERO = "Нельзя брать остаток от нуля!"
+const val ERROR_ARRAY_TYPE_NOT_DECLARED = "Тип массива не указан"
+
+const val UNDEFINED_TYPE = "Undefined Type"
