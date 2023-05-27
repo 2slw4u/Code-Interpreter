@@ -45,15 +45,16 @@ import com.example.codeinterpretator.ui.theme.TYPENAME_INT
 import com.example.codeinterpretator.ui.theme.TYPENAME_STRING
 import com.example.codeinterpretator.ui.theme.TYPE_LABEL_WIDTH
 import com.example.codeinterpretator.ui.theme.White
+import com.example.codeinterpretator.ui.theme.*
 
 class DeclarationOrAssignmentBlock : Block() {
-    var unusableNames: Array<String> =
+    val unusableNames: Array<String> =
         arrayOf("null", "if", "for", "fun", "Int", "String", "Bool", "Double", "Float", "Char")
     var variableNames: String =
-        "" // Здесь мы берём названия переменных из соответствующего поля блока декларации
+        "a" // Здесь мы берём названия переменных из соответствующего поля блока декларации
     var variableType: String =
-        TYPENAME_INT  // Здесь мы берём тип переменной из соответствующего поля блока декларации
-    var value: String = ""
+        "Int" // Здесь мы берём тип переменной из соответствующего поля блока декларации
+    var value: String = "9"
     val typesExamples =
         hashMapOf<String, Any>(
             "Int" to 0,
@@ -83,39 +84,31 @@ class DeclarationOrAssignmentBlock : Block() {
     }
 
     override public fun execute(variables: HashMap<String, Any>) {
-        var allNames = variableNames.replace(" ", "").split(",")
+        val allNames = variableNames.replace(" ", "").split(",")
         for (variableName in allNames) {
             if (variableName == "") {
-                Console.print("Вы никак не назвали переменную!")
+                Console.print(ERROR_NO_VARIABLE_NAME)
             } else if (isRedeclared(variables, variableName)) {
-                Console.print("Редекларация переменной невозможна")
+                Console.print(ERROR_REDECLARING_VARIABLES)
             } else if (unusableNames.contains(variableName)) {
-                Console.print("Пожалуйста, не используйте ключевые слова в качестве названий переменных")
+                Console.print(ERROR_USING_KEYWORDS_IN_VARIABLE_NAME)
             } else if (!variableName.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
-                Console.print("Название переменной содержит запрещённые символы!")
+                Console.print(ERROR_CONTAINING_RESTRICTED_SYMBOLS)
             } else {
                 if (value == "") {
                     var fullName = variableName + ":" + variableType
                     variables.put(fullName, 0)
-                } else {
-                    if (typesExamples[variableType]!!::class == interpretRPN(
-                            variables,
-                            this.translateToRPN()
-                        )::class
-                    ) {
+                }
+                else {
+                    if (typesExamples[variableType]!!::class == interpretRPN(variables, this.translateToRPN())::class) {
                         variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
-                    } else {
-                        Console.print(
-                            "Попытка присвоения переменной типа " + variableType + " значения типа " + interpretRPN(
-                                variables,
-                                this.translateToRPN()
-                            )::class
-                        )
+                    }
+                    else {
+                        Console.print(ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT + variableType + " ; " + interpretRPN(variables, this.translateToRPN())::class)
                     }
                 }
             }
         }
-
         nextBlock?.execute(variables)
         if (nextBlock == null)
             parentBlock?.executeAfterNesting(variables)

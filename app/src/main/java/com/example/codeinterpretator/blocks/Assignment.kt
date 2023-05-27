@@ -43,8 +43,8 @@ import com.example.codeinterpretator.ui.theme.*
 
 class AssignmentBlock : Block() {
     var variableName: String =
-        "a" // Здесь мы берём название переменной из соответствующего поля блока присваивания
-    var value: String = "80" // Здесь мы берём присваиваемое значение из соответствующего поля
+        "" // Здесь мы берём название переменной из соответствующего поля блока присваивания
+    var value: String = "" // Здесь мы берём присваиваемое значение из соответствующего поля
     val variableTypes = arrayOf("Int", "String", "Bool", "Double", "Char")
     val typesExamples =
         hashMapOf<String, Any>(
