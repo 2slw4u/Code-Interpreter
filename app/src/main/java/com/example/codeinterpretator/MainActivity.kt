@@ -64,9 +64,13 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.example.codeinterpretator.blocks.AssignmentBlock
+import com.example.codeinterpretator.blocks.AssignmentBlockView
 import com.example.codeinterpretator.blocks.Block
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlock
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlockView
+import com.example.codeinterpretator.blocks.InputBlock
+import com.example.codeinterpretator.blocks.InputBlockView
 import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
 import com.example.codeinterpretator.blocks.blockList
@@ -121,6 +125,12 @@ fun RenderBlock(block: Block) {
     when(block) {
         is DeclarationOrAssignmentBlock -> {
             DeclarationOrAssignmentBlockView(block)
+        }
+        is AssignmentBlock -> {
+            AssignmentBlockView(block)
+        }
+        is InputBlock -> {
+            InputBlockView(block)
         }
         is OutputBlock -> {
             OutputBlockView(block)

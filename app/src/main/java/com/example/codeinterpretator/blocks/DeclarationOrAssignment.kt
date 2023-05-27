@@ -26,39 +26,80 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.codeinterpretator.createBlock
+import com.example.codeinterpretator.interpreter.ExpressionToRPNConverter
+import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.BLOCKLABEL_NAME
+import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
 import com.example.codeinterpretator.ui.theme.DragTarget
+import com.example.codeinterpretator.ui.theme.EQUALSIGN
+import com.example.codeinterpretator.ui.theme.TYPENAME_BOOL
+import com.example.codeinterpretator.ui.theme.TYPENAME_CHAR
+import com.example.codeinterpretator.ui.theme.TYPENAME_DOUBLE
+import com.example.codeinterpretator.ui.theme.TYPENAME_INT
+import com.example.codeinterpretator.ui.theme.TYPENAME_STRING
 
 class DeclarationOrAssignmentBlock : Block() {
-    val unusableNames: Array<String> =
-        arrayOf("null", "if", "for", "fun", "Int", "String", "Bool", "Double", "Float")
-    var variableName: String =
-        "" // Здесь мы берём название переменной из соответствующего поля блока декларации
+    var unusableNames: Array<String> =
+        arrayOf("null", "if", "for", "fun", "Int", "String", "Bool", "Double", "Float", "Char")
+    var variableNames: String =
+        "" // Здесь мы берём названия переменных из соответствующего поля блока декларации
     var variableType: String =
-        "Int" // Здесь мы берём тип переменной из соответствующего поля блока декларации
+        TYPENAME_INT  // Здесь мы берём тип переменной из соответствующего поля блока декларации
+    var value: String = ""
+    val typesExamples =
+        hashMapOf<String, Any>(
+            "Int" to 0,
+            "String" to "a",
+            "Bool" to true,
+            "Double" to 0.5,
+            "Char" to 'c'
+        )
 
-    // Если это поле пустое, то variableType = null; это значит, что мы не декларируем переменную, а
-    // переопределяем
-    var value: String = "" // Здесь мы берём присваиваемое значение из соответствующего поля
 
-   override public fun translateToRPN(): ArrayList<String> {
-        var converter = ExpressionToRPNConverter()
+    private fun isRedeclared(variables: HashMap<String, Any>, variableName: String): Boolean {
+        if (variables.containsKey(variableName)) {
+            return true
+        }
+        val existingTypes = arrayOf("Int", "String", "Bool", "Double", "Char")
+        for (type in existingTypes) {
+            if (variables.containsKey(variableName + ":" + type)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    override public fun translateToRPN(): ArrayList<String> {
+        val converter = ExpressionToRPNConverter()
         return converter.convertExpressionToRPN(value)
     }
 
     override public fun execute(variables: HashMap<String, Any>) {
-        if (variableName == null) {
-            Console.print("Вы никак не назвали переменную!")
-        } else if (variables.containsKey(variableName) && variableType != null) {
-            Console.print("Редекларация переменной невозможна")
-            // здесь вместо простого вывода в консоль мы выбрасываем пользователю ошибку
-        } else if (unusableNames.contains(variableName)) {
-            Console.print("Пожалуйста, не используйте ключевые слова в качестве названий переменных")
-            // здесь вместо простого вывода в консоль мы выбрасываем пользователю ошибку
-        } else if (!variableName.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
-            Console.print("Название переменной содержит запрещённые символы!")
-        } else {
-            variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
+        var allNames = variableNames.replace(" ", "").split(",")
+        for (variableName in allNames) {
+            if (variableName == "") {
+                Console.print("Вы никак не назвали переменную!")
+            } else if (isRedeclared(variables, variableName)) {
+                Console.print("Редекларация переменной невозможна")
+            } else if (unusableNames.contains(variableName)) {
+                Console.print("Пожалуйста, не используйте ключевые слова в качестве названий переменных")
+            } else if (!variableName.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
+                Console.print("Название переменной содержит запрещённые символы!")
+            } else {
+                if (value == "") {
+                    var fullName = variableName + ":" + variableType
+                    variables.put(fullName, 0)
+                }
+                else {
+                    if (typesExamples[variableType]!!::class == interpretRPN(variables, this.translateToRPN())::class) {
+                        variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
+                    }
+                    else {
+                        Console.print("Попытка присвоения переменной типа " + variableType + " значения типа " + interpretRPN(variables, this.translateToRPN())::class)
+                    }
+                }
+            }
         }
     }
 }
@@ -70,7 +111,7 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
     var variableValue by remember { mutableStateOf("") }
     var dropdownExpanded by remember { mutableStateOf(false) }
 
-    variableName = block.variableName
+    variableName = block.variableNames
     variableValue = block.value
 
     Row(
@@ -98,28 +139,34 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 DropdownMenuItem(onClick = {
-                    block.variableType = "Int"
+                    block.variableType = TYPENAME_INT
                     dropdownExpanded = false
                 },
-                    text = { Text("Int") }
+                    text = { Text(TYPENAME_INT) }
                 )
                 DropdownMenuItem(onClick = {
-                    block.variableType = "String"
+                    block.variableType = TYPENAME_STRING
                     dropdownExpanded = false
                 },
-                    text = { Text("String") }
+                    text = { Text(TYPENAME_STRING) }
                 )
                 DropdownMenuItem(onClick = {
-                    block.variableType = "Bool"
+                    block.variableType = TYPENAME_BOOL
                     dropdownExpanded = false
                 },
-                    text = { Text("Bool") }
+                    text = { Text(TYPENAME_BOOL) }
                 )
                 DropdownMenuItem(onClick = {
-                    block.variableType = "Double"
+                    block.variableType = TYPENAME_DOUBLE
                     dropdownExpanded = false
                 },
-                    text = { Text("Double") }
+                    text = { Text(TYPENAME_DOUBLE) }
+                )
+                DropdownMenuItem(onClick = {
+                    block.variableType = TYPENAME_CHAR
+                    dropdownExpanded = false
+                },
+                    text = { Text(TYPENAME_CHAR) }
                 )
             }
         }
@@ -128,12 +175,12 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
             value = variableName,
             onValueChange = {
                 variableName = it
-                block.variableName = variableName
+                block.variableNames = variableName
             },
             modifier = Modifier
                 .weight(1f)
                 .height(60.dp),
-            label = { Text("Name") }
+            label = { Text(BLOCKLABEL_NAME) }
         )
 
         Box(
@@ -142,7 +189,7 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
                 .height(60.dp)
                 .padding(10.dp)
         ) {
-            Text("=")
+            Text(EQUALSIGN)
         }
 
         TextField(
@@ -154,7 +201,7 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
             modifier = Modifier
                 .weight(1f)
                 .height(60.dp),
-            label = { Text("Value") }
+            label = { Text(BLOCKLABEL_VALUE) }
         )
     }
 }

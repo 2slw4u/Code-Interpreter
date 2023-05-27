@@ -24,17 +24,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.codeinterpretator.interpreter.ExpressionToRPNConverter
+import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.BLOCKLABEL_OUTPUT
+import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
 import com.example.codeinterpretator.ui.theme.DragTarget
 
 class OutputBlock : Block() {
     var value = "" //Это то, что нам надо вывести
-//    override public fun translateToRPN(): ArrayList<String> {
-//        var converter = ExpressionToRPNConverter()
-//        return converter.convertExpressionToRPN(value)
-//    }
+    override public fun translateToRPN(): ArrayList<String> {
+        var converter = ExpressionToRPNConverter()
+        return converter.convertExpressionToRPN(value)
+    }
     override public fun execute(variables: HashMap<String, Any>) {
-//        println(interpretRPN(variables, this.translateToRPN()).toString())
+        Console.print(interpretRPN(variables, this.translateToRPN()).toString())
    }
 }
 
@@ -57,7 +61,7 @@ fun OutputBlockView(block: OutputBlock) {
                 .height(60.dp)
                 .padding(10.dp)
         ) {
-            Text("print")
+            Text(BLOCKTEXT_PRINT)
         }
 
         TextField(
@@ -69,7 +73,7 @@ fun OutputBlockView(block: OutputBlock) {
             modifier = Modifier
                 .weight(1f)
                 .height(60.dp),
-            label = { Text("Output") }
+            label = { Text(BLOCKLABEL_OUTPUT) }
         )
     }
 }
