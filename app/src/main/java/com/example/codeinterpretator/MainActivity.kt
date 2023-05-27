@@ -139,6 +139,8 @@ fun RenderBlock(block: Block) {
 }
 
 fun createBlock(block: Block, at: Int) {
+    if(blockList.size != 0)
+        blockList.last().nextBlock = block
     blockList.add(at, block)
 }
 
@@ -148,7 +150,9 @@ fun deleteBlock(at: Int) {
 
 fun executeCode() {
     var variables = HashMap<String, Any>()
-    for (currentBlock: Block in blockList) {
+    /*for (currentBlock: Block in blockList) {
         currentBlock.execute(variables)
-    }
+    }*/
+    if (blockList.size != 0)
+        blockList[0].execute(variables)
 }

@@ -102,8 +102,9 @@ object Workspace : Tab {
                 Box(
                     modifier = Modifier
                         .clickable {
-                        createBlock(declaration, blockList.size)
-                        scope.launch{
+                            var newBlock = DeclarationOrAssignmentBlock()
+                            createBlock(newBlock, blockList.size)
+                            scope.launch{
                             scaffoldState.drawerState.close()
                         }
                     }
@@ -114,7 +115,8 @@ object Workspace : Tab {
                 Text(TITLE_ASSIGNMENT_BLOCK)
                 Box(
                     modifier = Modifier.clickable {
-                        createBlock(assignment, blockList.size)
+                        var newBlock = AssignmentBlock()
+                        createBlock(newBlock, blockList.size)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }
@@ -126,7 +128,8 @@ object Workspace : Tab {
                 Text(TITLE_INPUT_BLOCK)
                 Box(
                     modifier = Modifier.clickable {
-                        createBlock(input, blockList.size)
+                        var newBlock = InputBlock()
+                        createBlock(newBlock, blockList.size)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }
@@ -138,7 +141,8 @@ object Workspace : Tab {
                 Text(TITLE_OUTPUT_BLOCK)
                 Box(
                     modifier = Modifier.clickable {
-                        createBlock(output, blockList.size)
+                        var newBlock = OutputBlock()
+                        createBlock(newBlock, blockList.size)
                         scope.launch {
                             scaffoldState.drawerState.close()
                         }

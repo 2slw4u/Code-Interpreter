@@ -159,6 +159,8 @@ class AssignmentBlock : Block() {
                 }
             }
         }
+
+        nextBlock?.execute(variables)
     }
 }
 

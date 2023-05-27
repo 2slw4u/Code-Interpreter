@@ -39,6 +39,7 @@ class OutputBlock : Block() {
     }
     override public fun execute(variables: HashMap<String, Any>) {
         Console.print(interpretRPN(variables, this.translateToRPN()).toString())
+        nextBlock?.execute(variables)
    }
 }
 

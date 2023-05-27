@@ -120,6 +120,8 @@ class InputBlock: Block() {
                 }
             }
         }
+
+        nextBlock?.execute(variables)
     }
 }
 

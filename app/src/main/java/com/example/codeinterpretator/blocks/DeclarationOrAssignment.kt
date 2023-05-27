@@ -101,6 +101,8 @@ class DeclarationOrAssignmentBlock : Block() {
                 }
             }
         }
+
+        nextBlock?.execute(variables)
     }
 }
 
