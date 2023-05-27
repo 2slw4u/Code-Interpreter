@@ -51,6 +51,8 @@ class IfElseBlock : NestingBlock() {
     var expression: String =
         "" // Здесь мы берём выражение переменной из соответствующего поля блока
 
+    val elseBlock = ElseBlock()
+
     override public fun translateToRPN(): ArrayList<String> {
         val converter = ExpressionToRPNConverter()
         return converter.convertExpressionToRPN(expression)
@@ -92,14 +94,12 @@ class IfElseBlock : NestingBlock() {
                     }
                 }*/
 
-                if (ifWrong.size != 0) ifWrong[0].execute(variables)
+                if (elseBlock.ifCorrect.size != 0) elseBlock.ifCorrect[0].execute(variables)
                 else executeAfterNesting(variables)
             }
         }
     }
 }
-
-val list = mutableStateListOf<Block>(OutputBlock())
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -180,7 +180,7 @@ fun IfPart(block: IfElseBlock) {
     }
 }
 
-@Composable
+/*@Composable
 fun ElsePart(block: IfElseBlock) {
     Row(modifier = Modifier.run {
         padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
@@ -198,4 +198,4 @@ fun ElsePart(block: IfElseBlock) {
             Text(BLOCKTEXT_ELSE)
         }
     }
-}
+}*/

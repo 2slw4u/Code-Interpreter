@@ -45,7 +45,7 @@ open class NestingBlock : Block() {
     }
 
     var ifCorrect: ArrayList<Block> = arrayListOf<Block>()
-    var ifWrong: ArrayList<Block> = arrayListOf<Block>()
+    //var ifWrong: ArrayList<Block> = arrayListOf<Block>()
     var isPreview: Boolean = false
     var nestedBlocksCount = 0
 
@@ -56,12 +56,12 @@ open class NestingBlock : Block() {
         ifCorrect.add(new)
     }
 
-    public fun addBlockToWrong(new: Block) {
+    /*public fun addBlockToWrong(new: Block) {
         if (ifWrong.size != 0) {
             ifWrong.last().nextBlock = new
         }
         ifWrong.add(new)
-    }
+    }*/
 }
 
 /*@Composable

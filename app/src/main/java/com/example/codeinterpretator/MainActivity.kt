@@ -73,6 +73,8 @@ import com.example.codeinterpretator.blocks.AssignmentBlockView
 import com.example.codeinterpretator.blocks.Block
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlock
 import com.example.codeinterpretator.blocks.DeclarationOrAssignmentBlockView
+import com.example.codeinterpretator.blocks.ElseBlock
+import com.example.codeinterpretator.blocks.ElseBlockView
 import com.example.codeinterpretator.blocks.IfElseBlock
 import com.example.codeinterpretator.blocks.IfElseBlockView
 import com.example.codeinterpretator.blocks.InputBlock
@@ -160,6 +162,10 @@ fun RenderBlock(block: Block, scaffoldState: ScaffoldState, scope: CoroutineScop
             IfElseBlockView(block, scaffoldState, scope)
         }
 
+        is ElseBlock -> {
+            ElseBlockView(block, scaffoldState, scope)
+        }
+
         is WhileBlock -> {
             WhileBlockView(block, scaffoldState, scope)
         }
@@ -217,6 +223,10 @@ fun createBlock(
             parentBlock.ifCorrect.last().nextBlock = block
         }
         parentBlock.ifCorrect.add(block)
+    }
+
+    if (block is IfElseBlock) {
+        blockList.add(at + 1, block.elseBlock)
     }
 }
 

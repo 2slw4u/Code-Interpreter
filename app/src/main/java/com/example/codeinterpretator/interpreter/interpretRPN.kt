@@ -218,6 +218,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             operand1.code > operand2.code
                         } else if ((operand1 is Int || operand2 is Int) &&
                             (operand1 is Double || operand2 is Double) ||
+                            (operand1 is Int && operand2 is Int) ||
                             (operand1 is Double && operand2 is Double))
                         {
                             operand1.toString().toDouble() > operand2.toString().toDouble()
@@ -238,6 +239,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             operand1.code >= operand2.code
                         } else if ((operand1 is Int || operand2 is Int) &&
                             (operand1 is Double || operand2 is Double) ||
+                            (operand1 is Int && operand2 is Int) ||
                             (operand1 is Double && operand2 is Double))
                         {
                             operand1.toString().toDouble() >= operand2.toString().toDouble()
@@ -260,6 +262,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             operand1.code < operand2.code
                         } else if ((operand1 is Int || operand2 is Int) &&
                             (operand1 is Double || operand2 is Double) ||
+                            (operand1 is Int && operand2 is Int) ||
                             (operand1 is Double && operand2 is Double))
                         {
                             operand1.toString().toDouble() < operand2.toString().toDouble()
@@ -282,6 +285,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             operand1.code <= operand2.code
                         } else if ((operand1 is Int || operand2 is Int) &&
                             (operand1 is Double || operand2 is Double) ||
+                            (operand1 is Int && operand2 is Int) ||
                             (operand1 is Double && operand2 is Double))
                         {
                             operand1.toString().toDouble() <= operand2.toString().toDouble()
@@ -317,9 +321,12 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
             }
         }
     }
-    val resultVal = stack.removeAt(stack.size - 1)
+    var resultVal: Any = false
+    if (stack.size > 0) {
+        resultVal = stack.removeAt(stack.size - 1)
+    }
     if (stack.isNotEmpty()) {
-        Console.print(ERROR_INSUFFICIENT_OPERATORS)
+        println(ERROR_INSUFFICIENT_OPERATORS)
     }
     return resultVal
 }
