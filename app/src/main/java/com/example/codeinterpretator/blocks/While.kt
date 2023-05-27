@@ -3,6 +3,7 @@ package com.example.codeinterpretator.blocks
 import com.example.codeinterpretator.interpreter.ExpressionToRPNConverter
 import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.ERROR_NOT_BOOLEAN_TYPE
 
 class WhileBlock : Block() {
     var ifCorrect: ArrayList<Block> = arrayListOf<Block>()
@@ -18,13 +19,15 @@ class WhileBlock : Block() {
         var result = interpretRPN(variables, this.translateToRPN())
         val variablesToRemove = arrayListOf<String>()
         var currentVariablesSize = variables.size
-        while (true) {
+        while(true) {
             if (!(result is Boolean)) {
-                //Console.print(ERROR_NOT_BOOLEAN_TYPE)
+                Console.print(ERROR_NOT_BOOLEAN_TYPE)
                 break
-            } else if (result == false) {
+            }
+            else if (result == false) {
                 break
-            } else {
+            }
+            else {
                 for (i: Block in ifCorrect) {
                     i.execute(variables)
                     if (variables.size > currentVariablesSize) {

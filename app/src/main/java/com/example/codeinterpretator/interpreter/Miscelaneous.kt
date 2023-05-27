@@ -1,5 +1,8 @@
 package com.example.codeinterpretator.interpreter
 
+import com.example.codeinterpretator.screens.Console
+import com.example.codeinterpretator.ui.theme.ERROR_CHAR_OUT_OF_RANGE
+
 fun getType(value: Any): String {
     if (value is Int) {
         return "Int"
@@ -27,7 +30,7 @@ fun convertToCharIf(value: Int): Any {
     if (value in Char.MIN_VALUE.code..Char.MAX_VALUE.code) {
         return value.toChar()
     } else {
-        println("Значение выражения вышло за границы Char и было конвертировано в Int.")
+        Console.print(ERROR_CHAR_OUT_OF_RANGE)
         return value
     }
 }

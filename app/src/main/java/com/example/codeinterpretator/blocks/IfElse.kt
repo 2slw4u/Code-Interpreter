@@ -42,6 +42,7 @@ import com.example.codeinterpretator.ui.theme.BLOCKTEXT_IF
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
 import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.DragTarget
+import com.example.codeinterpretator.ui.theme.ERROR_NOT_BOOLEAN_TYPE
 import com.example.codeinterpretator.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -68,6 +69,32 @@ class IfElseBlock : NestingBlock() {
             else executeAfterNesting(variables)
         }
     }
+
+    /*override fun execute(variables: HashMap<String, Any>) {
+        val variablesToRemove = arrayListOf<String>()
+        var currentVariablesSize = variables.size
+        if (!(interpretRPN(variables, this.translateToRPN()) is Boolean)) {
+            Console.print(ERROR_NOT_BOOLEAN_TYPE)
+        } else {
+            if (interpretRPN(variables, this.translateToRPN()) == true) {
+                for (i: Block in ifCorrect) {
+                    i.execute(variables)
+                    if (variables.size > currentVariablesSize) {
+                        variablesToRemove.add(variables.entries.last().key)
+                        currentVariablesSize = variables.size
+                    }
+                }
+            } else {
+                for (i: Block in ifWrong) {
+                    i.execute(variables)
+                    if (variables.size > currentVariablesSize) {
+                        variablesToRemove.add(variables.entries.last().key)
+                        currentVariablesSize = variables.size
+                    }
+                }
+            }
+        }
+    }*/
 
     public fun addBlockToCorrect(new: Block) {
         ifCorrect.add(new)

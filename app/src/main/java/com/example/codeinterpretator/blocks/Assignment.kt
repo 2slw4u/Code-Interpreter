@@ -29,6 +29,7 @@ import com.example.codeinterpretator.interpreter.convertToIntOrNull
 import com.example.codeinterpretator.interpreter.extractIndexSubstring
 import com.example.codeinterpretator.interpreter.getType
 import com.example.codeinterpretator.interpreter.interpretRPN
+import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VARIABLE
@@ -38,11 +39,12 @@ import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.EQUALSIGN
 import com.example.codeinterpretator.ui.theme.SINGLE_WEIGHT
 import com.example.codeinterpretator.ui.theme.White
+import com.example.codeinterpretator.ui.theme.*
 
 class AssignmentBlock : Block() {
     var variableName: String =
-        "" // Здесь мы берём название переменной из соответствующего поля блока присваивания
-    var value: String = "" // Здесь мы берём присваиваемое значение из соответствующего поля
+        "a" // Здесь мы берём название переменной из соответствующего поля блока присваивания
+    var value: String = "80" // Здесь мы берём присваиваемое значение из соответствующего поля
     val variableTypes = arrayOf("Int", "String", "Bool", "Double", "Char")
     val typesExamples =
         hashMapOf<String, Any>(
@@ -58,112 +60,104 @@ class AssignmentBlock : Block() {
         return converter.convertExpressionToRPN(value)
     }
 
-    override public fun execute(variables: HashMap<String, Any>) {
-        if (value == "") {
-            println("Попытка присвоения переменной пустого выражения")
-        }
-        if (variables.containsKey(variableName) && variables[variableName] is Array<*>) {
-            if (variables.containsKey(value) && variables[value] is Array<*>) {
-                var firstArray = variables[variableName] as Array<Any>
-                val secondArray = variables[value] as Array<Any>
-                if (getType(firstArray[0]) != getType(secondArray[0])) {
-                    println("Нельзя присваивать массивы разных типов!")
-                } else {
-                    for (i in secondArray.indices) {
-                        if (i < firstArray.size) {
-                            firstArray[i] = secondArray[i]
-                        } else {
-                            println(
-                                "Размер массива " +
-                                        value +
-                                        " больше, чем размер массива " +
-                                        variableName +
-                                        ". Было присвоено только " +
-                                        (i - 1).toString() +
-                                        " элементов."
-                            )
-                            break
-                        }
-                    }
-                    if (secondArray.size < firstArray.size) {
-                        println(
-                            "Размер массива " +
-                                    value +
-                                    " меньше, чем размер массива " +
-                                    variableName +
-                                    ". Было присвоено только " +
-                                    (secondArray.size).toString() +
-                                    " элементов."
-                        )
-                    }
-                    variables.put(variableName, firstArray)
-                }
+    private fun workingWithArray(variables: HashMap<String, Any>) {
+        if (variables.containsKey(value) && variables[value] is Array<*>) {
+            val firstArray = variables[variableName] as Array<Any>
+            val secondArray = variables[value] as Array<Any>
+            if (getType(firstArray[0]) != getType(secondArray[0])) {
+                Console.print(ERROR_DIFFERENT_TYPES_ARRAY_ASSIGNMENT)
             } else {
-                println("Полное присваивание массива возможно только на этапе объявления!")
-            }
-        } else if (variableName.matches(Regex("""\w+\[\s*.*?\s*]"""))) {
-            val arrayName = variableName.substringBefore("[")
-            val indexString = extractIndexSubstring(variableName, '[', ']')
-            var converter = ExpressionToRPNConverter()
-            val index =
-                convertToIntOrNull(
-                    interpretRPN(
-                        variables,
-                        converter.convertExpressionToRPN(indexString.toString())
-                    )
-                        .toString()
-                )
-            var array = variables[arrayName] as? Array<Any>
-            if (array != null && index != null && index >= 0 && index < array.size) {
-                array[index] = interpretRPN(variables, this.translateToRPN())
-                variables.put(arrayName, array)
-            } else {
-                if (array == null) {
-                    throw IllegalArgumentException(
-                        "Указан некорректное название массива для переменной: $variableName"
-                    )
-                } else {
-                    throw IllegalArgumentException(
-                        "Указан некорректный индекс для переменной: $variableName, $index"
-                    )
-                }
-            }
-        } else {
-            val result = interpretRPN(variables, this.translateToRPN())
-            if (variables.containsKey(variableName)) {
-                if (variables[variableName]!!::class == result::class) {
-                    variables.put(variableName, result)
-                } else {
-                    println(
-                        "Попытка присвоения переменной типа " +
-                                getType(variables[variableName]!!) +
-                                " значение типа " +
-                                getType(result)
-                    )
-                }
-            } else {
-                var variableIsDeclared: Boolean = false
-                for (type: String in variableTypes) {
-                    if (variables.containsKey(variableName + ":" + type)) {
-                        if (typesExamples[type]!!::class == result::class) {
-                            variables.put(variableName, result)
-                            variables.remove(variableName + ":" + type)
-                        } else {
-                            println(
-                                "Попытка присвоения переменной типа " +
-                                        type +
-                                        " значение типа " +
-                                        getType(result)
-                            )
-                        }
-                        variableIsDeclared = true
+                for (i in secondArray.indices) {
+                    if (i < firstArray.size) {
+                        firstArray[i] = secondArray[i]
+                    } else {
+                        Console.print(ERROR_DIFFERENT_ARRAY_SIZES + (i - 1).toString())
                         break
                     }
                 }
-                if (!variableIsDeclared) {
-                    println("Попытка присвоения значений необъявленной переменной: " + variableName)
+                if (secondArray.size < firstArray.size) {
+                    Console.print(ERROR_DIFFERENT_ARRAY_SIZES + (secondArray.size).toString())
+                }
+                variables.put(variableName, firstArray)
+            }
+        } else {
+            Console.print(ERROR_STOP_FULL_ARRAY_ASSIGNMENT)
+        }
+    }
+
+    private fun workingWithElementOfArray(variables: HashMap<String, Any>) {
+        val arrayName = variableName.substringBefore("[")
+        val indexString = extractIndexSubstring(variableName, '[', ']')
+        val converter = ExpressionToRPNConverter()
+        val index =
+            convertToIntOrNull(
+                interpretRPN(
+                    variables,
+                    converter.convertExpressionToRPN(indexString.toString())
+                )
+                    .toString()
+            )
+        val array = variables[arrayName] as? Array<Any>
+        if (array != null && index != null && index >= 0 && index < array.size) {
+            val processedValue = interpretRPN(variables, this.translateToRPN())
+            if (array[index]::class == processedValue::class) {
+                array[index] = processedValue
+                variables.put(arrayName, array)
+            }
+            else {
+                Console.print(ERROR_ARRAY_UNCOMPATIBLE_TYPES+ array[index]::class + "; " + processedValue::class)
+            }
+        } else {
+            if (array == null) {
+                Console.print(
+                    ERROR_INCORRECT_ARRAY_NAME + variableName
+                )
+            } else {
+                Console.print(
+                    ERROR_INCORRECT_ARRAY_NAME + variableName + ", " + index
+                )
+            }
+        }
+    }
+
+    private fun workingWithBasicTypes(variables: HashMap<String, Any>) {
+        val result = interpretRPN(variables, this.translateToRPN())
+        if (variables.containsKey(variableName)) {
+            if (variables[variableName]!!::class == result::class) {
+                variables.put(variableName, result)
+            } else {
+                Console.print(ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT +getType(variables[variableName]!!) +" ; " + getType(result))
+            }
+        } else {
+            var variableIsDeclared: Boolean = false
+            for (type: String in variableTypes) {
+                if (variables.containsKey(variableName + ":" + type)) {
+                    if (typesExamples[type]!!::class == result::class) {
+                        variables.put(variableName, result)
+                        variables.remove(variableName + ":" + type)
+                    } else {
+                        Console.print(ERROR_DIFFERENT_TYPES_VARIABLES_ASSIGNMENT +getType(result) +" ; " +type)
+                    }
+                    variableIsDeclared = true
+                    break
                 }
             }
+            if (!variableIsDeclared) {
+                Console.print(ERROR_UNDECLARED_VARIABLE_ASSIGNMENT + variableName)
+            }
+        }
+    }
+
+    override public fun execute(variables: HashMap<String, Any>) {
+        if (value == "") {
+            Console.print(ERROR_ASSIGNING_EMPTY_EXPRESSION)
+        }
+        if (variables.containsKey(variableName) && variables[variableName] is Array<*>) {
+            workingWithArray(variables)
+        } else if (variableName.matches(Regex("""\w+\[\s*.*?\s*]"""))) {
+            workingWithElementOfArray(variables)
+        } else {
+            workingWithBasicTypes(variables)
         }
 
         nextBlock?.execute(variables)
@@ -171,6 +165,8 @@ class AssignmentBlock : Block() {
             parentBlock?.executeAfterNesting(variables)
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
