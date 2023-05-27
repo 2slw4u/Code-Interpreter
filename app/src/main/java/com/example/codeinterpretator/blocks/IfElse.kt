@@ -48,19 +48,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class IfElseBlock : NestingBlock() {
-    var ifCorrect: ArrayList<Block> = arrayListOf<Block>()
-    var ifWrong: ArrayList<Block> = arrayListOf<Block>()
     var expression: String =
         "" // Здесь мы берём выражение переменной из соответствующего поля блока
-    var isPreview: Boolean = false
-    var nestedBlocksCount = 0
 
     override public fun translateToRPN(): ArrayList<String> {
         val converter = ExpressionToRPNConverter()
         return converter.convertExpressionToRPN(expression)
     }
 
-    override public fun execute(variables: HashMap<String, Any>) {
+    /*override public fun execute(variables: HashMap<String, Any>) {
         if (interpretRPN(variables, this.translateToRPN()) == 1) {
             if (ifCorrect.size != 0) ifCorrect[0].execute(variables)
             else executeAfterNesting(variables)
@@ -68,40 +64,38 @@ class IfElseBlock : NestingBlock() {
             if (ifWrong.size != 0) ifWrong[0].execute(variables)
             else executeAfterNesting(variables)
         }
-    }
+    }*/
 
-    /*override fun execute(variables: HashMap<String, Any>) {
+    override fun execute(variables: HashMap<String, Any>) {
         val variablesToRemove = arrayListOf<String>()
         var currentVariablesSize = variables.size
         if (!(interpretRPN(variables, this.translateToRPN()) is Boolean)) {
             Console.print(ERROR_NOT_BOOLEAN_TYPE)
         } else {
             if (interpretRPN(variables, this.translateToRPN()) == true) {
-                for (i: Block in ifCorrect) {
+                /*for (i: Block in ifCorrect) {
                     i.execute(variables)
                     if (variables.size > currentVariablesSize) {
                         variablesToRemove.add(variables.entries.last().key)
                         currentVariablesSize = variables.size
                     }
-                }
+                }*/
+
+                if (ifCorrect.size != 0) ifCorrect[0].execute(variables)
+                else executeAfterNesting(variables)
             } else {
-                for (i: Block in ifWrong) {
+                /*for (i: Block in ifWrong) {
                     i.execute(variables)
                     if (variables.size > currentVariablesSize) {
                         variablesToRemove.add(variables.entries.last().key)
                         currentVariablesSize = variables.size
                     }
-                }
+                }*/
+
+                if (ifWrong.size != 0) ifWrong[0].execute(variables)
+                else executeAfterNesting(variables)
             }
         }
-    }*/
-
-    public fun addBlockToCorrect(new: Block) {
-        ifCorrect.add(new)
-    }
-
-    public fun addBlockToWrong(new: Block) {
-        ifWrong.add(new)
     }
 }
 

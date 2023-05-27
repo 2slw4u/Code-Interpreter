@@ -80,7 +80,10 @@ import com.example.codeinterpretator.blocks.InputBlockView
 import com.example.codeinterpretator.blocks.NestingBlock
 import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
+import com.example.codeinterpretator.blocks.WhileBlock
+import com.example.codeinterpretator.blocks.WhileBlockView
 import com.example.codeinterpretator.blocks.blockList
+import com.example.codeinterpretator.blocks.noParentsList
 import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.screens.Workspace
 import com.example.codeinterpretator.ui.theme.CodeInterpretatorTheme
@@ -156,6 +159,10 @@ fun RenderBlock(block: Block, scaffoldState: ScaffoldState, scope: CoroutineScop
         is IfElseBlock -> {
             IfElseBlockView(block, scaffoldState, scope)
         }
+
+        is WhileBlock -> {
+            WhileBlockView(block, scaffoldState, scope)
+        }
     }
 }
 
@@ -165,7 +172,7 @@ fun createBlock(
     parentBlock: NestingBlock?,
     additionalList: ArrayList<Block>
 ) {
-    if (parentBlock != null)
+    /*if (parentBlock != null)
         block.parentBlock = parentBlock
 
     if (at != 0) {
@@ -195,6 +202,21 @@ fun createBlock(
     blockList.add(at, block)
     if (parentBlock != null) {
         additionalList.add(block)
+    }*/
+    blockList.add(at, block)
+
+    if (parentBlock == null) {
+        if (noParentsList.size != 0) {
+            noParentsList.last().nextBlock = block
+        }
+        noParentsList.add(block)
+    }
+    else {
+        block.parentBlock = parentBlock
+        if (parentBlock.ifCorrect.size != 0) {
+            parentBlock.ifCorrect.last().nextBlock = block
+        }
+        parentBlock.ifCorrect.add(block)
     }
 }
 
@@ -204,10 +226,11 @@ fun deleteBlock(at: Int) {
 
 fun clearSpace() {
     blockList.clear()
+    noParentsList.clear()
 }
 
 fun executeCode() {
     var variables = HashMap<String, Any>()
-    if (blockList.size != 0)
-        blockList[0].execute(variables)
+    if (noParentsList.size != 0)
+        noParentsList[0].execute(variables)
 }

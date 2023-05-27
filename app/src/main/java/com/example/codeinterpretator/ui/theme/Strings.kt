@@ -6,7 +6,8 @@ val TITLE_ASSIGNMENT_BLOCK = "Присваивание"
 val TITLE_ARRAY_ASSIGNMENT_BLOCK = "Декларация массива"
 val TITLE_INPUT_BLOCK = "Ввод"
 val TITLE_OUTPUT_BLOCK = "Вывод"
-val TITLE_OUTPUT_IFELSE = "Условное ветвление"
+val TITLE_IFELSE_BLOCK = "Условное ветвление"
+val TITLE_WHILE_BLOCK = "Цикл while"
 
 val BLOCKLABEL_VARIABLE = "Variable"
 val BLOCKLABEL_NAME = "Name"
@@ -20,6 +21,7 @@ val BLOCKTEXT_PRINT = "print"
 val BLOCKTEXT_READ = "read"
 val BLOCKTEXT_IF = "if"
 val BLOCKTEXT_ELSE = "else"
+val BLOCKTEXT_WHILE = "while"
 
 val TYPENAME_INT = "Int"
 val TYPENAME_STRING = "String"
@@ -82,3 +84,4 @@ const val ERROR_MODULUS_BY_ZERO = "Нельзя брать остаток от �
 const val ERROR_ARRAY_TYPE_NOT_DECLARED = "Тип массива не указан"
 
 const val UNDEFINED_TYPE = "Undefined Type"
+const val ENTER_TEXT = "Введите текст: "

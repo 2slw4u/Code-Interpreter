@@ -13,6 +13,7 @@ import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.TAB
 
 val blockList = mutableStateListOf<Block>()
+val noParentsList = mutableStateListOf<Block>()
 
 open class Block {
     open public fun translateToRPN(): ArrayList<String> {
@@ -41,6 +42,25 @@ open class NestingBlock : Block() {
         nextBlock?.execute(variables)
         if (nextBlock == null)
             parentBlock?.executeAfterNesting(variables)
+    }
+
+    var ifCorrect: ArrayList<Block> = arrayListOf<Block>()
+    var ifWrong: ArrayList<Block> = arrayListOf<Block>()
+    var isPreview: Boolean = false
+    var nestedBlocksCount = 0
+
+    public fun addBlockToCorrect(new: Block) {
+        if (ifCorrect.size != 0) {
+            ifCorrect.last().nextBlock = new
+        }
+        ifCorrect.add(new)
+    }
+
+    public fun addBlockToWrong(new: Block) {
+        if (ifWrong.size != 0) {
+            ifWrong.last().nextBlock = new
+        }
+        ifWrong.add(new)
     }
 }
 

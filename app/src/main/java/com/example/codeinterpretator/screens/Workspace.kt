@@ -61,6 +61,8 @@ import com.example.codeinterpretator.blocks.NestingBlock
 import com.example.codeinterpretator.blocks.OutputBlock
 import com.example.codeinterpretator.blocks.OutputBlockView
 import com.example.codeinterpretator.blocks.ReceiverBlockView
+import com.example.codeinterpretator.blocks.WhileBlock
+import com.example.codeinterpretator.blocks.WhileBlockView
 import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.clearSpace
 import com.example.codeinterpretator.createBlock
@@ -71,9 +73,10 @@ import com.example.codeinterpretator.ui.theme.LongPressDraggable
 import com.example.codeinterpretator.ui.theme.TITLE_ARRAY_ASSIGNMENT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_ASSIGNMENT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_DECLARATION_BLOCK
+import com.example.codeinterpretator.ui.theme.TITLE_IFELSE_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_INPUT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_OUTPUT_BLOCK
-import com.example.codeinterpretator.ui.theme.TITLE_OUTPUT_IFELSE
+import com.example.codeinterpretator.ui.theme.TITLE_WHILE_BLOCK
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -121,6 +124,10 @@ object Workspace : Tab {
         var ifelse = IfElseBlock()
         ifelse.isPreview = true
         ifelse.expression = "a>b"
+
+        var whileblock = WhileBlock()
+        whileblock.isPreview = true
+        whileblock.expression = "true"
 
         Scaffold(
             scaffoldState = scaffoldState,
@@ -198,7 +205,7 @@ object Workspace : Tab {
                     OutputBlockView(output)
                 }
 
-                Text(TITLE_OUTPUT_IFELSE)
+                Text(TITLE_IFELSE_BLOCK)
                 Box(
                     modifier = Modifier.clickable {
                         var newBlock = IfElseBlock()
@@ -209,6 +216,19 @@ object Workspace : Tab {
                     }
                 ) {
                     IfElseBlockView(ifelse, rememberScaffoldState(), rememberCoroutineScope())
+                }
+
+                Text(TITLE_WHILE_BLOCK)
+                Box(
+                    modifier = Modifier.clickable {
+                        var newBlock = WhileBlock()
+                        createBlock(newBlock, addBlockAt, parentBlock, additionalList)
+                        scope.launch {
+                            scaffoldState.drawerState.close()
+                        }
+                    }
+                ) {
+                    WhileBlockView(whileblock, rememberScaffoldState(), rememberCoroutineScope())
                 }
             }
         ) { padding ->
