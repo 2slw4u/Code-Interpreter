@@ -30,7 +30,9 @@ import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_OUTPUT
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
+import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.DragTarget
+import com.example.codeinterpretator.ui.theme.White
 
 class OutputBlock : Block() {
     var value = "" //Это то, что нам надо вывести
@@ -54,8 +56,8 @@ fun OutputBlockView(block: OutputBlock) {
     Row(
         modifier = Modifier
             .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-            .background(color = Color.White)
+            .border(BorderStroke(2.dp, Black))
+            .background(color = White)
     ) {
         Box(
             contentAlignment = Alignment.Center,

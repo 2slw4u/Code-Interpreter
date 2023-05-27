@@ -40,7 +40,9 @@ import com.example.codeinterpretator.ui.theme.BLOCKLABEL_OUTPUT
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_ELSE
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_IF
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
+import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.DragTarget
+import com.example.codeinterpretator.ui.theme.White
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -138,8 +140,8 @@ fun IfPart(block: IfElseBlock) {
     Row(
         modifier = Modifier
             .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-            .background(color = Color.White)
+            .border(BorderStroke(2.dp, Black))
+            .background(color = White)
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -167,11 +169,12 @@ fun IfPart(block: IfElseBlock) {
 @Composable
 fun ElsePart(block: IfElseBlock) {
     Row(
-        modifier = Modifier
-            .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-            .background(color = Color.White)
-            .fillMaxWidth()
+        modifier = Modifier.run {
+            padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
+                .border(BorderStroke(2.dp, Black))
+                .background(color = White)
+                .fillMaxWidth()
+        }
     ) {
         Box(
             contentAlignment = Alignment.Center,

@@ -32,7 +32,9 @@ import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VARIABLE
+import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.EQUALSIGN
+import com.example.codeinterpretator.ui.theme.White
 
 class AssignmentBlock : Block() {
     var variableName: String =
@@ -179,8 +181,8 @@ fun AssignmentBlockView(block: AssignmentBlock) {
     Row(
         modifier = Modifier
             .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-            .background(color = Color.White)
+            .border(BorderStroke(2.dp, Black))
+            .background(color = White)
     ) {
         TextField(
             value = variableName,

@@ -32,6 +32,7 @@ import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_NAME
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
+import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.EQUALSIGN
 import com.example.codeinterpretator.ui.theme.TYPENAME_BOOL
@@ -39,6 +40,7 @@ import com.example.codeinterpretator.ui.theme.TYPENAME_CHAR
 import com.example.codeinterpretator.ui.theme.TYPENAME_DOUBLE
 import com.example.codeinterpretator.ui.theme.TYPENAME_INT
 import com.example.codeinterpretator.ui.theme.TYPENAME_STRING
+import com.example.codeinterpretator.ui.theme.White
 
 class DeclarationOrAssignmentBlock : Block() {
     var unusableNames: Array<String> =
@@ -122,8 +124,8 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
     Row(
         modifier = Modifier
             .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-            .background(color = Color.White)
+            .border(BorderStroke(2.dp, Black))
+            .background(color = White)
     ) {
         Box(
             contentAlignment = Alignment.Center,

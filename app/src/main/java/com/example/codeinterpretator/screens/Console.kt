@@ -44,7 +44,9 @@ import com.example.codeinterpretator.blocks.InputBlock
 import com.example.codeinterpretator.blocks.blockList
 import com.example.codeinterpretator.createBlock
 import com.example.codeinterpretator.executeCode
+import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.INPUT_SEND
+import com.example.codeinterpretator.ui.theme.White
 
 object Console : Tab {
     val consoleLines = mutableStateListOf<String>()
@@ -68,11 +70,11 @@ object Console : Tab {
     @Composable
     override fun Content() {
         Box(modifier = Modifier
-            .background(color = Color.Black)
+            .background(color = Black)
             .fillMaxSize()) {
             LazyColumn() {
                 itemsIndexed(consoleLines) { index, item ->
-                    Text(item, color = Color.White)
+                    Text(item, color = White)
                 }
                 items(inputBlocks) { item ->
                     TextSender(item)
@@ -88,7 +90,7 @@ object Console : Tab {
         Column() {
             BasicTextField(
                 value = value,
-                textStyle = TextStyle(color = Color.White),
+                textStyle = TextStyle(color = White),
                 onValueChange = {
                     value = it
                     block.value = value

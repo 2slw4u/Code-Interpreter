@@ -31,6 +31,7 @@ import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCK_HEIGHT
 import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.DropTarget
+import com.example.codeinterpretator.ui.theme.Transparent
 
 @Composable
 fun ReceiverBlockView(receiverBlockId: Int) {
@@ -68,7 +69,7 @@ fun ReceiverBlockView(receiverBlockId: Int) {
         Box(
             modifier = Modifier
                 .height(height.dp)
-                .background(color = Color.Transparent)
+                .background(color = Transparent)
                 .fillMaxWidth()
         )
     }

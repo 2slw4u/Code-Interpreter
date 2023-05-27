@@ -29,6 +29,8 @@ import com.example.codeinterpretator.ui.theme.BLOCKLABEL_OUTPUT
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VARIABLE
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_PRINT
 import com.example.codeinterpretator.ui.theme.BLOCKTEXT_READ
+import com.example.codeinterpretator.ui.theme.Black
+import com.example.codeinterpretator.ui.theme.White
 
 class InputBlock: Block() {
     var variableName = ""
@@ -137,8 +139,8 @@ fun InputBlockView(block: InputBlock) {
     Row(
         modifier = Modifier
             .padding(start = nestedPadding.dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-            .background(color = Color.White)
+            .border(BorderStroke(2.dp, Black))
+            .background(color = White)
     ) {
         Box(
             contentAlignment = Alignment.Center,
