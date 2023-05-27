@@ -161,6 +161,8 @@ class AssignmentBlock : Block() {
         }
 
         nextBlock?.execute(variables)
+        if(nextBlock == null)
+            parentBlock?.executeAfterNesting(variables)
     }
 }
 

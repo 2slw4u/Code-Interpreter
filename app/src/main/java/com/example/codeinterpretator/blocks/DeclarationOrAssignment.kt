@@ -103,6 +103,8 @@ class DeclarationOrAssignmentBlock : Block() {
         }
 
         nextBlock?.execute(variables)
+        if(nextBlock == null)
+            parentBlock?.executeAfterNesting(variables)
     }
 }
 
