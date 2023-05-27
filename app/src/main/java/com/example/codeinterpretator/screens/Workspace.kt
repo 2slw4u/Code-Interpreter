@@ -68,6 +68,7 @@ import com.example.codeinterpretator.ui.theme.TITLE_OUTPUT_BLOCK
 import com.example.codeinterpretator.ui.theme.TITLE_OUTPUT_IFELSE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
 object Workspace : Tab {
     var addBlockAt = blockList.size
     var parentBlock: NestingBlock? = null
@@ -114,10 +115,10 @@ object Workspace : Tab {
                         .clickable {
                             var newBlock = DeclarationOrAssignmentBlock()
                             createBlock(newBlock, addBlockAt, parentBlock, additionalList)
-                            scope.launch{
-                            scaffoldState.drawerState.close()
+                            scope.launch {
+                                scaffoldState.drawerState.close()
+                            }
                         }
-                    }
                 ) {
                     DeclarationOrAssignmentBlockView(declaration)
                 }
@@ -183,7 +184,11 @@ object Workspace : Tab {
                         LazyColumn() {
                             item { ReceiverBlockView(-1) }
                             itemsIndexed(blockList) { index, item ->
-                                DragTarget(modifier = Modifier, dataToDrop = item, blockId = index) {
+                                DragTarget(
+                                    modifier = Modifier,
+                                    dataToDrop = item,
+                                    blockId = index
+                                ) {
                                     RenderBlock(item, scaffoldState, scope)
                                 }
                                 ReceiverBlockView(index)
@@ -201,8 +206,9 @@ object Workspace : Tab {
                                 scope.launch {
                                     scaffoldState.drawerState.open()
                                     parentBlock = null
-                                    addBlockAt = blockList.size}
-                                      },
+                                    addBlockAt = blockList.size
+                                }
+                            },
                             modifier = Modifier.padding(bottom = 70.dp, start = 10.dp)
                         ) {
                             Text("+", fontSize = 28.sp)

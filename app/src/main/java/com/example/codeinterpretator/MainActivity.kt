@@ -92,12 +92,13 @@ class MainActivity : ComponentActivity() {
             TabNavigator(Workspace) {
                 Scaffold(
                     content = { PaddingValues ->
-                            CurrentTab()
+                        CurrentTab()
                     },
                     floatingActionButton = {
                         FloatingActionButton(
                             content = {
-                                Icon(Icons.Filled.PlayArrow, contentDescription = "Run") },
+                                Icon(Icons.Filled.PlayArrow, contentDescription = "Run")
+                            },
                             onClick = {
                                 Console.clear()
                                 executeCode()
@@ -129,34 +130,42 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
 
 @Composable
 fun RenderBlock(block: Block, scaffoldState: ScaffoldState, scope: CoroutineScope) {
-    when(block) {
+    when (block) {
         is DeclarationOrAssignmentBlock -> {
             DeclarationOrAssignmentBlockView(block)
         }
+
         is AssignmentBlock -> {
             AssignmentBlockView(block)
         }
+
         is InputBlock -> {
             InputBlockView(block)
         }
+
         is OutputBlock -> {
             OutputBlockView(block)
         }
+
         is IfElseBlock -> {
             IfElseBlockView(block, scaffoldState, scope)
         }
     }
 }
 
-fun createBlock(block: Block, at: Int, parentBlock: NestingBlock?, additionalList: ArrayList<Block>) {
+fun createBlock(
+    block: Block,
+    at: Int,
+    parentBlock: NestingBlock?,
+    additionalList: ArrayList<Block>
+) {
     if (parentBlock != null)
         block.parentBlock = parentBlock
 
     if (at != 0) {
         if (blockList[at - 1].parentBlock == block.parentBlock) {
             blockList[at - 1].nextBlock = block
-        }
-        else {
+        } else {
             for (i in at - 2 downTo 0 step 1) {
                 if (blockList[i].parentBlock == block.parentBlock) {
                     blockList[i].nextBlock = block
@@ -168,8 +177,7 @@ fun createBlock(block: Block, at: Int, parentBlock: NestingBlock?, additionalLis
     if (at != blockList.size) {
         if (blockList[at].parentBlock == block.parentBlock) {
             block.nextBlock = blockList[at]
-        }
-        else {
+        } else {
             for (i in at + 1..blockList.size - 1) {
                 if (blockList[i].parentBlock == block.parentBlock) {
                     block.nextBlock = blockList[i]

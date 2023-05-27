@@ -13,10 +13,12 @@ import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.TAB
 
 val blockList = mutableStateListOf<Block>()
+
 open class Block {
     open public fun translateToRPN(): ArrayList<String> {
         return arrayListOf<String>()
     }
+
     open public fun execute(variables: HashMap<String, Any>) {}
 
     open public var partCount: Int = 1
@@ -37,7 +39,7 @@ open class Block {
 open class NestingBlock : Block() {
     open public fun executeAfterNesting(variables: HashMap<String, Any>) {
         nextBlock?.execute(variables)
-        if(nextBlock == null)
+        if (nextBlock == null)
             parentBlock?.executeAfterNesting(variables)
     }
 }

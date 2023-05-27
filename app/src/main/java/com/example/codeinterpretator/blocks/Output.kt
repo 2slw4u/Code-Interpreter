@@ -40,10 +40,11 @@ class OutputBlock : Block() {
         var converter = ExpressionToRPNConverter()
         return converter.convertExpressionToRPN(value)
     }
+
     override public fun execute(variables: HashMap<String, Any>) {
         Console.print(interpretRPN(variables, this.translateToRPN()).toString())
         nextBlock?.execute(variables)
-   }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

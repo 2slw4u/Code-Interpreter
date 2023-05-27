@@ -39,20 +39,29 @@ fun ReceiverBlockView(receiverBlockId: Int) {
     DropTarget<Block>(
         modifier = Modifier
             .fillMaxWidth()
-    ) {isInBound, block, oldBlockId ->
+    ) { isInBound, block, oldBlockId ->
         val expandedHeight = BETWEEN_BLOCK_DISTANCE * 2 + BLOCK_HEIGHT * (block?.partCount ?: 1)
         var height = if (isInBound) expandedHeight else BETWEEN_BLOCK_DISTANCE
         block?.let {
             if (isInBound && !alreadyPlaced) {
                 if (oldBlockId < receiverBlockId) {
-                    createBlock(block, receiverBlockId + 1, Workspace.parentBlock, Workspace.additionalList)
+                    createBlock(
+                        block,
+                        receiverBlockId + 1,
+                        Workspace.parentBlock,
+                        Workspace.additionalList
+                    )
                     deleteBlock(oldBlockId)
                     Console.print("from $oldBlockId")
                     Console.print("to $receiverBlockId")
                     Console.print("if")
-                }
-                else {
-                    createBlock(block, receiverBlockId + 1, Workspace.parentBlock, Workspace.additionalList)
+                } else {
+                    createBlock(
+                        block,
+                        receiverBlockId + 1,
+                        Workspace.parentBlock,
+                        Workspace.additionalList
+                    )
                     deleteBlock(oldBlockId + 1)
                     Console.print("from $oldBlockId")
                     Console.print("to $receiverBlockId")
@@ -60,8 +69,7 @@ fun ReceiverBlockView(receiverBlockId: Int) {
                 }
                 height = BETWEEN_BLOCK_DISTANCE
                 alreadyPlaced = true
-            }
-            else {
+            } else {
                 createBlock(block, oldBlockId, Workspace.parentBlock, Workspace.additionalList)
             }
         }

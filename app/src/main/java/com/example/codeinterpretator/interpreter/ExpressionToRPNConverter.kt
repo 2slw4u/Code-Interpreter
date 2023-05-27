@@ -77,7 +77,8 @@ class ExpressionToRPNConverter() {
                 stack.removeLast()
             } else if (operators.contains(currentElement)) {
                 while (!stack.isEmpty() &&
-                    getPriority(stack[stack.size - 1]) >= getPriority(currentElement)) {
+                    getPriority(stack[stack.size - 1]) >= getPriority(currentElement)
+                ) {
                     result.add(stack.removeLast())
                 }
                 stack.add(currentElement)

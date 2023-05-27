@@ -9,15 +9,19 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
             token.matches(Regex("-?\\d+(\\.\\d+)")) -> {
                 stack.add(token.toDouble())
             }
+
             token.matches(Regex("-?\\d+")) -> {
                 stack.add(token.toInt())
             }
+
             token.matches(Regex("\".*\"")) -> {
                 stack.add(token.removeSurrounding("\""))
             }
+
             token.matches(Regex("'.'")) -> {
                 stack.add(token[1])
             }
+
             token.matches(Regex("""\w+\[\s*.*?\s*]""")) -> {
                 val arrayName = token.substringBefore("[")
                 val indexString = extractIndexSubstring(token, '[', ']')
@@ -40,9 +44,11 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                     }
                 }
             }
+
             token.equals("true", true) || token.equals("false", true) -> {
                 stack.add(token.toBoolean())
             }
+
             variables.containsKey(token) -> {
                 if (variables[token] != null) {
                     stack.add(variables[token]!!)
@@ -50,6 +56,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                     throw IllegalArgumentException("Переменная $token имеет значение null!")
                 }
             }
+
             else -> {
                 if (stack.size < 2) {
                     throw IllegalArgumentException("Выражение не имеет достаточно переменных!")
@@ -65,13 +72,13 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             operand1.toString() + operand2.toString()
                         } else if (operand1 is Char && operand2 is Char) {
                             operand1.code + operand2.code
-                        }  else if (operand1 is Char && operand2 is Int) {
+                        } else if (operand1 is Char && operand2 is Int) {
                             convertToCharIf(operand1.code + operand2)
                         } else if (operand1 is Int && operand2 is Char) {
                             throw IllegalArgumentException(
                                 "Невозможная операция: Int $token Char. Может быть, вы имели в виду, Char $token Int?"
                             )
-                        } else if (operand1 is Int && operand2 is Int){
+                        } else if (operand1 is Int && operand2 is Int) {
                             operand1.toString().toInt() + operand2.toString().toInt()
                         } else if (operand1 is Int || operand2 is Int || operand1 is Double && operand2 is Double) {
                             operand1.toString().toDouble() + operand2.toString().toDouble()
@@ -81,6 +88,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "-" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -92,13 +100,13 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         } else if (operand1 is Char && operand2 is Char) {
                             operand1.code - operand2.code
-                        }  else if (operand1 is Char && operand2 is Int) {
+                        } else if (operand1 is Char && operand2 is Int) {
                             convertToCharIf(operand1.code - operand2)
                         } else if (operand1 is Int && operand2 is Char) {
                             throw IllegalArgumentException(
                                 "Невозможная операция: Int $token Char. Может быть, вы имели в виду, Char $token Int?"
                             )
-                        } else if (operand1 is Int && operand2 is Int){
+                        } else if (operand1 is Int && operand2 is Int) {
                             operand1.toString().toInt() - operand2.toString().toInt()
                         } else if (operand1 is Int || operand2 is Int || operand1 is Double && operand2 is Double) {
                             operand1.toString().toDouble() - operand2.toString().toDouble()
@@ -108,6 +116,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "*" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -119,13 +128,13 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         } else if (operand1 is Char && operand2 is Char) {
                             operand1.code * operand2.code
-                        }  else if (operand1 is Char && operand2 is Int) {
+                        } else if (operand1 is Char && operand2 is Int) {
                             convertToCharIf(operand1.code * operand2)
                         } else if (operand1 is Int && operand2 is Char) {
                             throw IllegalArgumentException(
                                 "Невозможная операция: Int $token Char. Может быть, вы имели в виду, Char $token Int?"
                             )
-                        } else if (operand1 is Int && operand2 is Int){
+                        } else if (operand1 is Int && operand2 is Int) {
                             operand1.toString().toInt() * operand2.toString().toInt()
                         } else if (operand1 is Int || operand2 is Int || operand1 is Double && operand2 is Double) {
                             operand1.toString().toDouble() * operand2.toString().toDouble()
@@ -135,6 +144,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "/" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -156,7 +166,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             throw IllegalArgumentException(
                                 "Невозможная операция: Int $token Char. Может быть, вы имели в виду, Char $token Int?"
                             )
-                        } else if (operand1 is Int && operand2 is Int){
+                        } else if (operand1 is Int && operand2 is Int) {
                             operand1.toString().toInt() / operand2.toString().toInt()
                         } else if (operand1 is Int || operand2 is Int || operand1 is Double && operand2 is Double) {
                             operand1.toString().toDouble() / operand2.toString().toDouble()
@@ -166,6 +176,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "%" -> {
 
                         if (operand1 is String ||
@@ -188,7 +199,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             throw IllegalArgumentException(
                                 "Невозможная операция: Int $token Char. Может быть, вы имели в виду, Char $token Int?"
                             )
-                        } else if (operand1 is Int && operand2 is Int){
+                        } else if (operand1 is Int && operand2 is Int) {
                             operand1.toString().toInt() % operand2.toString().toInt()
                         } else if (operand1 is Int || operand2 is Int || operand1 is Double && operand2 is Double) {
                             operand1.toString().toDouble() % operand2.toString().toDouble()
@@ -198,6 +209,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     ">" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -215,6 +227,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             throw IllegalArgumentException("Сравнение переменных разного типа невозможно!")
                         }
                     }
+
                     ">=" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -234,6 +247,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "<" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -253,6 +267,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "<=" -> {
                         if (operand1 is String ||
                             operand2 is String ||
@@ -273,6 +288,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "==" -> {
                         if (operand1::class == operand2::class) {
                             operand1 == operand2
@@ -282,6 +298,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     "!=" -> {
                         if (operand1::class == operand2::class) {
                             operand1 != operand2
@@ -291,6 +308,7 @@ fun interpretRPN(variables: HashMap<String, Any>, RPN: List<String>): Any {
                             )
                         }
                     }
+
                     else -> throw IllegalArgumentException(
                         "Оператор инвалид: $token"
                     )

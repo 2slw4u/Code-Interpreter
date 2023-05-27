@@ -32,7 +32,7 @@ import com.example.codeinterpretator.ui.theme.BLOCKTEXT_READ
 import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.White
 
-class InputBlock: Block() {
+class InputBlock : Block() {
     var variableName = ""
     var value = "" // Это то, что нам надо вывести
     val typesExamples =
@@ -68,29 +68,23 @@ class InputBlock: Block() {
         val processedValue = interpretRPN(variables, this.translateToRPN())
         if (variableName == "") {
             Console.print("Введите имя считываемой переменной")
-        }
-        else if (variables.contains(variableName)) {
+        } else if (variables.contains(variableName)) {
             if (variables[variableName] is Array<*>) {
                 Console.print("Нельзя считать весь массив сразу")
-            }
-            else if (variables[variableName]!!::class == processedValue::class) {
+            } else if (variables[variableName]!!::class == processedValue::class) {
                 variables.put(variableName, processedValue)
-            }
-            else {
+            } else {
                 Console.print("Переменной типа " + variables[variableName]!!::class + " присваивается значение типа " + processedValue::class)
             }
-        }
-        else if (declaredVariableType(variables) != "None") {
+        } else if (declaredVariableType(variables) != "None") {
             val variableType = declaredVariableType(variables)
             if (typesExamples[variableType]!!::class == processedValue::class) {
                 variables.put(variableName, processedValue)
                 variables.remove(variableName + ":" + variableType)
-            }
-            else {
+            } else {
                 Console.print("Переменной типа " + typesExamples[variableType]!!::class + " присваивается значение типа " + processedValue::class)
             }
-        }
-        else if (variableName.matches(Regex("""\w+\[\s*.*?\s*]"""))) {
+        } else if (variableName.matches(Regex("""\w+\[\s*.*?\s*]"""))) {
             val arrayName = variableName.substringBefore("[")
             val indexString = extractIndexSubstring(variableName, '[', ']')
             var converter = ExpressionToRPNConverter()
@@ -107,8 +101,7 @@ class InputBlock: Block() {
                 if (array[index]::class == processedValue::class) {
                     array[index] = processedValue
                     variables.put(arrayName, array)
-                }
-                else {
+                } else {
                     Console.print("В массив типа " + array[index]::class + " нельзя вставить значение типа " + processedValue::class)
                 }
             } else {

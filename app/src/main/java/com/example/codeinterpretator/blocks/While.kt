@@ -18,15 +18,13 @@ class WhileBlock : Block() {
         var result = interpretRPN(variables, this.translateToRPN())
         val variablesToRemove = arrayListOf<String>()
         var currentVariablesSize = variables.size
-        while(true) {
+        while (true) {
             if (!(result is Boolean)) {
                 //Console.print(ERROR_NOT_BOOLEAN_TYPE)
                 break
-            }
-            else if (result == false) {
+            } else if (result == false) {
                 break
-            }
-            else {
+            } else {
                 for (i: Block in ifCorrect) {
                     i.execute(variables)
                     if (variables.size > currentVariablesSize) {

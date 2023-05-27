@@ -32,14 +32,18 @@ import com.example.codeinterpretator.screens.Console
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_NAME
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
+import com.example.codeinterpretator.ui.theme.BLOCK_HEIGHT
+import com.example.codeinterpretator.ui.theme.BORDER
 import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.DragTarget
 import com.example.codeinterpretator.ui.theme.EQUALSIGN
+import com.example.codeinterpretator.ui.theme.SINGLE_WEIGHT
 import com.example.codeinterpretator.ui.theme.TYPENAME_BOOL
 import com.example.codeinterpretator.ui.theme.TYPENAME_CHAR
 import com.example.codeinterpretator.ui.theme.TYPENAME_DOUBLE
 import com.example.codeinterpretator.ui.theme.TYPENAME_INT
 import com.example.codeinterpretator.ui.theme.TYPENAME_STRING
+import com.example.codeinterpretator.ui.theme.TYPE_LABEL_WIDTH
 import com.example.codeinterpretator.ui.theme.White
 
 class DeclarationOrAssignmentBlock : Block() {
@@ -93,20 +97,27 @@ class DeclarationOrAssignmentBlock : Block() {
                 if (value == "") {
                     var fullName = variableName + ":" + variableType
                     variables.put(fullName, 0)
-                }
-                else {
-                    if (typesExamples[variableType]!!::class == interpretRPN(variables, this.translateToRPN())::class) {
+                } else {
+                    if (typesExamples[variableType]!!::class == interpretRPN(
+                            variables,
+                            this.translateToRPN()
+                        )::class
+                    ) {
                         variables.put(variableName, interpretRPN(variables, this.translateToRPN()))
-                    }
-                    else {
-                        Console.print("Попытка присвоения переменной типа " + variableType + " значения типа " + interpretRPN(variables, this.translateToRPN())::class)
+                    } else {
+                        Console.print(
+                            "Попытка присвоения переменной типа " + variableType + " значения типа " + interpretRPN(
+                                variables,
+                                this.translateToRPN()
+                            )::class
+                        )
                     }
                 }
             }
         }
 
         nextBlock?.execute(variables)
-        if(nextBlock == null)
+        if (nextBlock == null)
             parentBlock?.executeAfterNesting(variables)
     }
 }
@@ -124,14 +135,14 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
     Row(
         modifier = Modifier
             .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Black))
+            .border(BorderStroke(BORDER.dp, Black))
             .background(color = White)
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .width(100.dp)
-                .height(60.dp)
+                .width(TYPE_LABEL_WIDTH.dp)
+                .height(BLOCK_HEIGHT.dp)
         ) {
             TextButton(
                 onClick = { dropdownExpanded = true },
@@ -185,16 +196,16 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
                 block.variableNames = variableName
             },
             modifier = Modifier
-                .weight(1f)
-                .height(60.dp),
+                .weight(SINGLE_WEIGHT)
+                .height(BLOCK_HEIGHT.dp),
             label = { Text(BLOCKLABEL_NAME) }
         )
 
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .height(60.dp)
-                .padding(10.dp)
+                .height(BLOCK_HEIGHT.dp)
+                .padding(BETWEEN_BLOCK_DISTANCE.dp)
         ) {
             Text(EQUALSIGN)
         }
@@ -206,8 +217,8 @@ fun DeclarationOrAssignmentBlockView(block: DeclarationOrAssignmentBlock) {
                 block.value = variableValue
             },
             modifier = Modifier
-                .weight(1f)
-                .height(60.dp),
+                .weight(SINGLE_WEIGHT)
+                .height(BLOCK_HEIGHT.dp),
             label = { Text(BLOCKLABEL_VALUE) }
         )
     }

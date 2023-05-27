@@ -61,15 +61,11 @@ class IfElseBlock : NestingBlock() {
 
     override public fun execute(variables: HashMap<String, Any>) {
         if (interpretRPN(variables, this.translateToRPN()) == 1) {
-            if (ifCorrect.size != 0)
-                ifCorrect[0].execute(variables)
-            else
-                executeAfterNesting(variables)
+            if (ifCorrect.size != 0) ifCorrect[0].execute(variables)
+            else executeAfterNesting(variables)
         } else {
-            if (ifWrong.size != 0)
-                ifWrong[0].execute(variables)
-            else
-                executeAfterNesting(variables)
+            if (ifWrong.size != 0) ifWrong[0].execute(variables)
+            else executeAfterNesting(variables)
         }
     }
 
@@ -81,29 +77,32 @@ class IfElseBlock : NestingBlock() {
         ifWrong.add(new)
     }
 }
+
 val list = mutableStateListOf<Block>(OutputBlock())
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IfElseBlockView(block: IfElseBlock, scaffoldState: ScaffoldState, scope: CoroutineScope) {
     if (block.isPreview) {
         IfPart(block)
-    }
-    else {
+    } else {
         Column() {
             IfPart(block)
 
-            Box(modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd) {
+            Box(
+                modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd
+            ) {
                 Button(
-                    onClick = { scope.launch {
-                        scaffoldState.drawerState.open()
-                        block.nestedBlocksCount += 1
-                        Workspace.parentBlock = block
-                        Workspace.additionalList = block.ifCorrect
-                        Workspace.addBlockAt = blockList.indexOf(block) + block.nestedBlocksCount
-                    } },
-                    modifier = Modifier
-                        .padding(end = BETWEEN_BLOCK_DISTANCE.dp)
+                    onClick = {
+                        scope.launch {
+                            scaffoldState.drawerState.open()
+                            block.nestedBlocksCount += 1
+                            Workspace.parentBlock = block
+                            Workspace.additionalList = block.ifCorrect
+                            Workspace.addBlockAt =
+                                blockList.indexOf(block) + block.nestedBlocksCount
+                        }
+                    }, modifier = Modifier.padding(end = BETWEEN_BLOCK_DISTANCE.dp)
                 ) {
                     Text("+", fontSize = 10.sp)
                 }
@@ -111,14 +110,12 @@ fun IfElseBlockView(block: IfElseBlock, scaffoldState: ScaffoldState, scope: Cor
 
             /*LazyColumn(modifier = Modifier.padding(start = tab.dp)) {
 
-            }*/
-            /*LazyColumn(
+            }*//*LazyColumn(
                 modifier = Modifier.padding(start = tab.dp)
             ) {
                 item {Text("hi")}
                 item {Text("hi")}
-            }*/
-            /*LazyColumn(
+            }*//*LazyColumn(
                 //modifier = Modifier.padding(start = 20.dp)
             ) {
                 itemsIndexed(list) { index, item ->
@@ -139,46 +136,41 @@ fun IfPart(block: IfElseBlock) {
 
     Row(
         modifier = Modifier
-            .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
+            .padding(
+                start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp
+            )
             .border(BorderStroke(2.dp, Black))
             .background(color = White)
     ) {
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
+            contentAlignment = Alignment.Center, modifier = Modifier
                 .height(60.dp)
                 .padding(10.dp)
         ) {
             Text(BLOCKTEXT_IF)
         }
 
-        TextField(
-            value = expression,
-            onValueChange = {
-                expression = it
-                block.expression = expression
-            },
-            modifier = Modifier
-                .weight(1f)
-                .height(60.dp),
-            label = { Text(BLOCKLABEL_EXPRESSION) }
-        )
+        TextField(value = expression, onValueChange = {
+            expression = it
+            block.expression = expression
+        }, modifier = Modifier
+            .weight(1f)
+            .height(60.dp), label = { Text(BLOCKLABEL_EXPRESSION) })
     }
 }
 
 @Composable
 fun ElsePart(block: IfElseBlock) {
-    Row(
-        modifier = Modifier.run {
-            padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-                .border(BorderStroke(2.dp, Black))
-                .background(color = White)
-                .fillMaxWidth()
-        }
-    ) {
+    Row(modifier = Modifier.run {
+        padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
+            .border(
+                BorderStroke(2.dp, Black)
+            )
+            .background(color = White)
+            .fillMaxWidth()
+    }) {
         Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
+            contentAlignment = Alignment.Center, modifier = Modifier
                 .height(60.dp)
                 .padding(10.dp)
         ) {

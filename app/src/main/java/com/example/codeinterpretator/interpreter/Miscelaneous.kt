@@ -3,17 +3,13 @@ package com.example.codeinterpretator.interpreter
 fun getType(value: Any): String {
     if (value is Int) {
         return "Int"
-    }
-    else if (value is String) {
+    } else if (value is String) {
         return "String"
-    }
-    else if (value is Boolean) {
+    } else if (value is Boolean) {
         return "Boolean"
-    }
-    else if (value is Double) {
+    } else if (value is Double) {
         return "Double"
-    }
-    else if (value is Char) {
+    } else if (value is Char) {
         return "Char"
     }
     return "ты че"

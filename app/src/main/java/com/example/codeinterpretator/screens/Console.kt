@@ -69,9 +69,11 @@ object Console : Tab {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        Box(modifier = Modifier
-            .background(color = Black)
-            .fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .background(color = Black)
+                .fillMaxSize()
+        ) {
             LazyColumn() {
                 itemsIndexed(consoleLines) { index, item ->
                     Text(item, color = White)

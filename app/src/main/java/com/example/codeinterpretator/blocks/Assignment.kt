@@ -32,8 +32,11 @@ import com.example.codeinterpretator.interpreter.interpretRPN
 import com.example.codeinterpretator.ui.theme.BETWEEN_BLOCK_DISTANCE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VALUE
 import com.example.codeinterpretator.ui.theme.BLOCKLABEL_VARIABLE
+import com.example.codeinterpretator.ui.theme.BLOCK_HEIGHT
+import com.example.codeinterpretator.ui.theme.BORDER
 import com.example.codeinterpretator.ui.theme.Black
 import com.example.codeinterpretator.ui.theme.EQUALSIGN
+import com.example.codeinterpretator.ui.theme.SINGLE_WEIGHT
 import com.example.codeinterpretator.ui.theme.White
 
 class AssignmentBlock : Block() {
@@ -164,7 +167,7 @@ class AssignmentBlock : Block() {
         }
 
         nextBlock?.execute(variables)
-        if(nextBlock == null)
+        if (nextBlock == null)
             parentBlock?.executeAfterNesting(variables)
     }
 }
@@ -181,7 +184,7 @@ fun AssignmentBlockView(block: AssignmentBlock) {
     Row(
         modifier = Modifier
             .padding(start = block.nestedPadding().dp, end = BETWEEN_BLOCK_DISTANCE.dp)
-            .border(BorderStroke(2.dp, Black))
+            .border(BorderStroke(BORDER.dp, Black))
             .background(color = White)
     ) {
         TextField(
@@ -191,16 +194,16 @@ fun AssignmentBlockView(block: AssignmentBlock) {
                 block.variableName = variableName
             },
             modifier = Modifier
-                .weight(1f)
-                .height(60.dp),
+                .weight(SINGLE_WEIGHT)
+                .height(BLOCK_HEIGHT.dp),
             label = { Text(BLOCKLABEL_VARIABLE) }
         )
 
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .height(60.dp)
-                .padding(10.dp)
+                .height(BLOCK_HEIGHT.dp)
+                .padding(BETWEEN_BLOCK_DISTANCE.dp)
         ) {
             Text(EQUALSIGN)
         }
@@ -212,8 +215,8 @@ fun AssignmentBlockView(block: AssignmentBlock) {
                 block.value = variableValue
             },
             modifier = Modifier
-                .weight(1f)
-                .height(60.dp),
+                .weight(SINGLE_WEIGHT)
+                .height(BLOCK_HEIGHT.dp),
             label = { Text(BLOCKLABEL_VALUE) }
         )
     }
